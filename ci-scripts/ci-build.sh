@@ -27,7 +27,9 @@ case "$bn" in
 				CXX=/usr/lib/distcc/c++
 				EOF
                 for pkg in "${pkgs[@]}"; do
-                    MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+                    MEREDIR="$(pwd)/mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+                    # List built packages
+                    find mere-build || printf 'No mere-build dir\n'
                 done
                 ;;
             *)
@@ -44,9 +46,9 @@ case "$bn" in
         ;;
     *)
         for pkg in "${pkgs[@]}"; do
-            MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+            MEREDIR="$(pwd)/mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+            # List built packages
+            find mere-build || printf 'No mere-build dir\n'
         done
         ;;
 esac
-# List built packages
-find mere-build || printf 'No mere-build dir\n'
