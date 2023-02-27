@@ -3,6 +3,9 @@
 . "$CIRCLE_WORKING_DIRECTORY"/.env
 if [ "$bn" = 'main' ] ; then
     if [ "${#pkgs[@]}" -gt 0 ]; then
+        # List built packages
+        find mere-build
+
         # Sync down existing files in the testing repo
         printf 'Syncing down core/testing repo\n'
         install -d testing

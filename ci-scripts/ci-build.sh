@@ -48,3 +48,5 @@ case "$bn" in
         done
         ;;
 esac
+# List built packages
+find mere-build || printf 'No mere-build dir\n'
