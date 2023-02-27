@@ -2,22 +2,25 @@
 # shellcheck disable=SC2154,SC1091
 
 . "$CIRCLE_WORKING_DIRECTORY"/.env
-if [ -n "$pkg" ] && [ "$is_deleted" = 'false' ]; then
 
-    if printf '%s' "$bn" | grep -qE '^.*-parallel$'; then
-
+case "$bn" in
+    *-parallel|main)
         DISTCC_PORT='40000'
         DISTCC_CIDR='172.0.0.0/8'
+
+        curl -fsSL https://tailscale.com/install.sh | sudo sh
+        sudo tailscale up --authkey="$TS_KEY" \
+            --hostname="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${CIRCLE_NODE_INDEX}"
 
         case "$CIRCLE_NODE_INDEX" in
             0)
                 DISTCC_HOSTS='localhost'
                 step=1
                 while [ "$step" -lt "$CIRCLE_NODE_TOTAL" ]; do
-                    peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.bonobo-bluegill.ts.net")
+                    peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net")
                     until [ -n "$peerip" ]; do
                         sleep 5
-                        peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.bonobo-bluegill.ts.net")
+                        peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net")
                     done
                     DISTCC_HOSTS="${DISTCC_HOSTS} ${peerip}:${DISTCC_PORT}"
                     step=$((step + 1))
@@ -27,7 +30,9 @@ if [ -n "$pkg" ] && [ "$is_deleted" = 'false' ]; then
 				CC=/usr/lib/distcc/cc
 				CXX=/usr/lib/distcc/c++
 				EOF
-                MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+                for pkg in "${pkgs[@]}"; do
+                    MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+                done
                 ;;
             *)
                 printf 'Listening on port %s\n' "$DISTCC_PORT"
@@ -40,9 +45,10 @@ if [ -n "$pkg" ] && [ "$is_deleted" = 'false' ]; then
                 ;;
 
         esac
-    else
-        MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
-    fi
-else
-    printf 'No packages are required to build in this commit.\n'
-fi
+        ;;
+    *)
+        for pkg in "${pkgs[@]}"; do
+            MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
+        done
+        ;;
+esac
