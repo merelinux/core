@@ -24,12 +24,17 @@ if [ "$bn" = 'main' ] ; then
         -r /tmp/tools
 
     for dir in packages/* ; do
+        unset pkgname pkgver pkgrel
         . "${dir}/PKGBUILD"
+        printf 'Processing %s\n' "$dir"
         for pkg in "${pkgname[@]}"; do
+            printf '  Evaluating package %s\n' "$pkg"
             syncver=$(/tmp/pacman/usr/bin/pacman \
                       --config /tmp/pacman/etc/pacman.conf \
                       -r /tmp/tools -Si "$pkg" | \
                       grep -E '^Version' | awk '{print $NF}')
+            printf '    syncver:   %s\n' "$syncver"
+            printf '    parsedver: %s\n' "${pkgver}-${pkgrel}"
             if [ "$syncver" != "${pkgver}-${pkgrel}" ]; then
                 pkgs+=("$dir")
                 break
