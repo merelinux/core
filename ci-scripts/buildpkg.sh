@@ -61,8 +61,7 @@ case "$cmd" in
             -w /src \
             -v "$pkgdir":/src \
             -v "$MEREDIR":/mere \
-            -v "$(pwd)"/dev-scripts:/usr/local/bin \
-            -v "$(pwd)"/packages/pacman/pacman-dev.conf:/etc/pacman.conf \
+            -v "$(pwd)"/ci-scripts/build-in-docker:/usr/local/bin/build-in-docker \
             -v "${MEREDIR}/passwd":/etc/passwd \
             -v "${MEREDIR}/group":/etc/group \
             -u "${uid}:${gid}" \
@@ -84,9 +83,8 @@ case "$cmd" in
             -v "$tmpdir":"$tmpdir" \
             -v "$MEREDIR":/mere \
             -v "$(pwd)"/mere.key:/tmp/mere.key \
-            -v "$(pwd)"/dev-scripts/build-in-docker:/usr/local/bin/build-in-docker \
-            -v "$(pwd)"/dev-scripts/aa-distcc.sh:/usr/share/makepkg/tidy/aa-distcc.sh \
-            -v "$(pwd)"/packages/pacman/pacman-dev.conf:/etc/pacman.conf \
+            -v "$(pwd)"/ci-scripts/build-in-docker:/usr/local/bin/build-in-docker \
+            -v "$(pwd)"/ci-scripts/aa-distcc.sh:/usr/share/makepkg/tidy/aa-distcc.sh \
             --env-file ./.build-env \
             mere/dev:latest "$cmd"
         printf '\nNew package(s) added to %s\n' "${MEREDIR}/pkgs"
