@@ -1,0 +1,52 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+# Rationale: Greatly improves build times in CI pipelines for some packages
+
+pkgname=distcc
+pkgver=3.4
+pkgrel=1
+pkgdesc='A fast, free distributed C/C++ compiler'
+arch=(x86_64)
+url='https://www.distcc.org'
+license=(GPL2)
+groups=()
+depends=(python)
+makedepends=(
+    libiberty-dev
+    libtool
+    m4
+    python-dev
+)
+options=()
+changelog=ChangeLog
+source=(
+    "https://github.com/distcc/distcc/releases/download/v${pkgver}/distcc-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    2b99edda9dad9dbf283933a02eace6de7423fe5650daa4a728c950e5cd37bd7d
+)
+
+
+build() {
+    cd_unpacked_src
+    sed -i '/dcc_read_localslots_configuration/s@()@(void)@' src/where.c
+    sed -i \
+        -e '/int dcc_stats_init/s@()@(void)@' \
+        -e '/void dcc_stats_init_kid/s@()@(void)@' src/stats.c
+    sed -i "/Python.h/s@.*@#define PY_SSIZE_T_CLEAN\n&@" \
+        include_server/c_extensions/distcc_pump_c_extensions_module.c
+    ./autogen.sh
+    ./configure --prefix=/usr \
+        --host="$CHOST" \
+        --build="$CHOST"
+    make
+}
+
+package() {
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    std_package
+}
