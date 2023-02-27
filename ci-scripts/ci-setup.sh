@@ -20,13 +20,15 @@ if [ "$bn" = 'main' ] ; then
 	EOF
 
     install -d /tmp/tools/var/lib/pacman
-    sudo /tmp/pacman/usr/bin/pacman -Sy --config /tmp/pacman/etc/pacman.conf
+    sudo /tmp/pacman/usr/bin/pacman -Sy --config /tmp/pacman/etc/pacman.conf \
+        -r /tmp/tools
 
     for dir in packages/* ; do
         . "${dir}/PKGBUILD"
         for pkg in "${pkgname[@]}"; do
             syncver=$(/tmp/pacman/usr/bin/pacman \
-                      --config /tmp/pacman/etc/pacman.conf -Si "$pkg" | \
+                      --config /tmp/pacman/etc/pacman.conf \
+                      -r /tmp/tools -Si "$pkg" | \
                       grep -E '^Version' | awk '{print $NF}')
             if [ "$syncver" != "${pkgver}-${pkgrel}" ]; then
                 pkgs+=("${dir%/*}")
