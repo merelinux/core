@@ -18,9 +18,9 @@ jobs:
       - run:
           name: Shellcheck
           command: |
-            find packages -name PKGBUILD -exec shellcheck '{}' +
-            find packages -name PKGTEST -exec shellcheck '{}' +
-            find buildpkg.sh ci-scripts dev-scripts misc-util -type f -exec shellcheck '{}' +
+            find . -name PKGBUILD -exec shellcheck '{}' +
+            find . -name PKGTEST -exec shellcheck '{}' +
+            find ci-scripts -type f -exec shellcheck '{}' +
   build-parallel:
     executor: build-machine
     steps:
@@ -63,14 +63,9 @@ jobs:
     steps:
       - add_ssh_keys
       - checkout
-      - restore_cache:
-          key: testing-repo-v4-
       - run:
           name: Upload package
           command: ./ci-scripts/ci-upload.sh
-      - save_cache:
-          key: testing-repo-v4-{{ checksum "pkgs/testing/testing.db.tar.gz" }}
-          paths: pkgs/testing
 
 workflows:
   version: 2
