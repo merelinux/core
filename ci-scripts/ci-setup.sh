@@ -31,7 +31,7 @@ if [ "$bn" = 'main' ] ; then
                       -r /tmp/tools -Si "$pkg" | \
                       grep -E '^Version' | awk '{print $NF}')
             if [ "$syncver" != "${pkgver}-${pkgrel}" ]; then
-                pkgs+=("${dir%/*}")
+                pkgs+=("$dir")
                 break
             fi
         done
