@@ -37,9 +37,10 @@ jobs:
           command: ./ci-scripts/ci-test.sh
       - run:
           name: Upload package
-          command: find mere-build; exit 1; ./ci-scripts/ci-upload.sh
+          command: ./ci-scripts/ci-upload.sh
           when:
-            equal: [ main, << pipeline.git.branch >> ]
+            condition:
+              equal: [ main, << pipeline.git.branch >> ]
       - run:
           name: Cleanup
           command: sudo tailscale logout
