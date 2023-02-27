@@ -32,7 +32,7 @@ if [ "$bn" != 'main' ] ; then
 					CC=/usr/lib/distcc/cc
 					CXX=/usr/lib/distcc/c++
 					EOF
-                    MEREDIR="/tmp/mere" ./ci-scripts/buildpkg.sh "$pkg"
+                    MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
                     ;;
                 *)
                     printf 'Listening on port %s\n' "$DISTCC_PORT"
@@ -46,7 +46,7 @@ if [ "$bn" != 'main' ] ; then
 
             esac
         else
-            MEREDIR="/tmp/mere" ./ci-scripts/buildpkg.sh "$pkg"
+            MEREDIR="mere-build" ./ci-scripts/buildpkg.sh "$pkg"
         fi
     else
         printf 'No packages are required to build in this commit.\n'
