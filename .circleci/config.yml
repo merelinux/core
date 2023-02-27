@@ -38,9 +38,6 @@ jobs:
       - run:
           name: Upload package
           command: ./ci-scripts/ci-upload.sh
-          when:
-            condition:
-              equal: [ main, << pipeline.git.branch >> ]
       - run:
           name: Cleanup
           command: sudo tailscale logout
