@@ -9,10 +9,6 @@ if [ -n "$pkg" ] && [ "$is_deleted" = 'false' ]; then
         DISTCC_PORT='40000'
         DISTCC_CIDR='172.0.0.0/8'
 
-        curl -fsSL https://tailscale.com/install.sh | sudo sh
-        sudo tailscale up --authkey="$TS_KEY" \
-            --hostname="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${CIRCLE_NODE_INDEX}"
-
         case "$CIRCLE_NODE_INDEX" in
             0)
                 DISTCC_HOSTS='localhost'
