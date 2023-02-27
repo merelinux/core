@@ -21,7 +21,7 @@ if [ "$bn" = 'main' ] ; then
 
     install -d /tmp/tools/var/lib/pacman
     sudo /tmp/pacman/usr/bin/pacman -Sy --config /tmp/pacman/etc/pacman.conf \
-        -r /tmp/tools
+        -r /tmp/tools --noconfirm pacman-build
 
     for dir in packages/* ; do
         unset pkgname pkgver pkgrel
