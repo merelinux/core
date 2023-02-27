@@ -4,11 +4,30 @@ bn="$(git rev-parse --abbrev-ref HEAD)"
 
 pkgs=()
 if [ "$bn" = 'main' ] ; then
-    pacman -Sy
+    # install pacman-build
+    install -d /tmp/pacman
+    curl -LO http://pkgs.merelinux.org/core/pacman-latest-x86_64.pkg.tar.xz
+    tar -C /tmp/pacman -xf pacman-latest-x86_64.pkg.tar.xz 2>/dev/null
+
+    cat >/tmp/pacman/etc/pacman.conf <<- "EOF"
+	[options]
+	HoldPkg      = pacman busybox
+	Architecture = auto
+	ParallelDownloads = 3
+	SigLevel = Never
+	[core]
+	Server = https://pkgs.merelinux.org/core/testing/os/$arch
+	EOF
+
+    install -d /tmp/tools/var/lib/pacman
+    sudo /tmp/pacman/usr/bin/pacman -Sy --config /tmp/pacman/etc/pacman.conf
+
     for dir in packages/* ; do
         . "${dir}/PKGBUILD"
         for pkg in "${pkgname[@]}"; do
-            syncver=$(pacman -Si "$pkg" | grep -E '^Version' | awk '{print $NF}')
+            syncver=$(/tmp/pacman/usr/bin/pacman \
+                      --config /tmp/pacman/etc/pacman.conf -Si "$pkg" | \
+                      grep -E '^Version' | awk '{print $NF}')
             if [ "$syncver" != "${pkgver}-${pkgrel}" ]; then
                 pkgs+=("${dir%/*}")
                 break
@@ -35,6 +54,14 @@ cat >"$CIRCLE_WORKING_DIRECTORY"/.env <<EOF
 bn='$bn'
 pkgs=(${unique_pkgs[@]})
 EOF
+
+case "$bn" in
+    *-parallel|main)
+        curl -fsSL https://tailscale.com/install.sh | sudo sh
+        sudo tailscale up --authkey="$TS_KEY" \
+            --hostname="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${CIRCLE_NODE_INDEX}"
+        ;;
+esac
 
 printf '%s\n' "$MERE_SIGNING_KEY" | base64 -d >"$CIRCLE_WORKING_DIRECTORY"/mere.key
 
