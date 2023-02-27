@@ -22,15 +22,15 @@ install -d /tmp/pacman
 curl -LO http://pkgs.merelinux.org/core/pacman-latest-x86_64.pkg.tar.xz
 tar -C /tmp/pacman -xf pacman-latest-x86_64.pkg.tar.xz 2>/dev/null
 
-cat >/tmp/pacman/etc/pacman.conf <<EOF
+cat >/tmp/pacman/etc/pacman.conf <<"EOF"
 [options]
 HoldPkg      = pacman busybox
 Architecture = auto
 ParallelDownloads = 3
 SigLevel = Never
 
-[testing]
-Server = https://pkgs.merelinux.org/testing
+[core]
+Server = https://pkgs.merelinux.org/core/testing/os/$arch
 EOF
 
 install -d /tmp/tools/var/lib/pacman
@@ -55,19 +55,19 @@ while [ "$i" -lt "$len" ]; do
 done
 
 # Sync down existing files in the testing repo
-printf 'Syncing down testing repo\n'
-install -d pkgs/testing
+printf 'Syncing down core/testing repo\n'
+install -d testing
 rsync -rlptv -e 'ssh -p 50220' \
-    pkgsync@pkgs.merelinux.org::pkgs/testing/ pkgs/testing/
+    "pkgsync@pkgs.merelinux.org::pkgs/core/testing/os/$(arch)/" testing/
 
 # Copy over the staging files to testing
 printf '%s\n' "$MERE_SIGNING_KEY" | base64 -d >"$CIRCLE_WORKING_DIRECTORY"/mere.key
 find staging -name "*.pkg*" -not -name "*.sig" | while read -r file ; do
-    mv -v "$file" pkgs/testing
-    [ -f "${file}.sig" ] && mv -v "${file}.sig" pkgs/testing
+    mv -v "$file" testing/
+    [ -f "${file}.sig" ] && mv -v "${file}.sig" testing/
     LIBRARY=/tmp/tools/usr/share/makepkg repo-add \
         --sign --key "${CIRCLE_WORKING_DIRECTORY}/mere.key" \
-        -R pkgs/testing/testing.db.tar.gz "pkgs/testing/${file##*/}"
+        -R testing/core.db.tar.gz "testing/${file##*/}"
 done
 find staging -name "*.src.tar.xz" | while read -r file; do
     bn=${file##*/}
@@ -85,4 +85,4 @@ done
 # Upload
 printf 'Syncing up testing repo\n'
 rsync -rlptv --delete-after -e 'ssh -p 50220' \
-    pkgs/testing/ pkgsync@pkgs.merelinux.org::pkgs/testing/
+    "testing/ pkgsync@pkgs.merelinux.org::pkgs/core/testing/os/$(arch)/"
