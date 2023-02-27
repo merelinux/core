@@ -85,4 +85,4 @@ done
 # Upload
 printf 'Syncing up testing repo\n'
 rsync -rlptv --delete-after -e 'ssh -p 50220' \
-    "testing/ pkgsync@pkgs.merelinux.org::pkgs/core/testing/os/$(arch)/"
+    testing/ "pkgsync@pkgs.merelinux.org::pkgs/core/testing/os/$(arch)/"
