@@ -1,6 +1,9 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154
 
+# Rationale for inclusion in core:
+# Required by distcc.
+
 pkgname=(libiberty-dev)
 pkgver=2.40
 pkgrel=1

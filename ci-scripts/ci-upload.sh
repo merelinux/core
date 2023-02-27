@@ -40,7 +40,7 @@ export PATH="/tmp/tools/bin:/tmp/tools/usr/bin:$PATH"
 
 # Download artifacts
 artifacts="$(curl \
-    "https://circleci.com/api/v1.1/project/github/jhuntwork/merelinux/latest/artifacts?branch=${branch}&filter=successful" \
+    "https://circleci.com/api/v1.1/project/github/merelinux/core/latest/artifacts?branch=${branch}&filter=successful" \
     -H "Circle-Token: ${CIRCLE_API_TOKEN}")"
 [ -n "$artifacts" ] || { printf 'Unable to find artifacts to upload\n'; exit 1; }
 
