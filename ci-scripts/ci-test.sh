@@ -1,7 +1,10 @@
-#!/bin/sh -e
+#!/bin/bash -e
 # shellcheck disable=SC2154,SC1091
 . "$CIRCLE_WORKING_DIRECTORY"/.env
-if [ -n "$pkg" ] && [ -f "$pkg/PKGTEST" ]; then
-  cd "$pkg"
-  sh PKGTEST
-fi
+
+for pkg in "${pkgs[@]}"; do
+    if [ -f "$pkg/PKGTEST" ]; then
+        cd "$pkg"
+        sh PKGTEST
+    fi
+done
