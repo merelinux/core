@@ -62,6 +62,9 @@ case "$cmd" in
             -v "$pkgdir":/src \
             -v "$MEREDIR":/mere \
             -v "$(pwd)"/ci-scripts/build-in-docker:/usr/local/bin/build-in-docker \
+            -v "$(pwd)"/ci-scripts/gen:/usr/local/bin/gen \
+            -v "$(pwd)"/ci-scripts/gen_sums:/usr/local/bin/gen_sums \
+            -v "$(pwd)"/ci-scripts/gen_changelog:/usr/local/bin/gen_changelog \
             -v "${MEREDIR}/passwd":/etc/passwd \
             -v "${MEREDIR}/group":/etc/group \
             -u "${uid}:${gid}" \
