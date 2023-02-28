@@ -31,7 +31,11 @@ build() {
         --enable-static-link \
         --mandir=/usr/share/man \
         --without-bash-malloc \
-        --with-installed-readline
+        --with-installed-readline \
+        bash_cv_func_strtoimax=no # See note below
+    # When static linking, if the above resolves to yes, the built version will
+    # contain duplicate symbols as libc. Setting to no is a quick way to get
+    # around the issue.
     make
 }
 
