@@ -1,0 +1,35 @@
+2.4.48-8 (2022-09-25)
+
+	Sign packages
+
+2.4.48-7 (2021-04-09)
+
+	Update provides and specific lib dependencies
+
+2.4.48-6 (2021-04-08)
+
+	Remove from any groups for now
+
+2.4.48-5 (2021-02-21)
+
+	Build with latest version of musl/llvm
+
+2.4.48-4 (2019-08-04)
+
+	Upload source package
+
+2.4.48-3 (2019-07-30)
+
+	Use std build functions
+
+2.4.48-2 (2019-07-29)
+
+	Updated dependencies to include musl
+
+2.4.48-1 (2018-11-13)
+
+	Upgrade to 2.4.48
+
+2.4.47-1 (2015-03-25)
+
+	Initial version

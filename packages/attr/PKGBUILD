@@ -1,0 +1,70 @@
+#!/bin/bash
+# shellcheck disable=SC2034
+
+# Rationale: Required by libacl and libarchive
+
+pkgname=(
+    attr
+    libattr
+    libattr-dev
+)
+pkgver=2.5.1
+pkgrel=1
+pkgdesc='A library for manipulating filesystem extended attributes'
+arch=(x86_64)
+url='http://savannah.nongnu.org/projects/attr'
+license=(GPL)
+groups=()
+depends=()
+makedepends=(gettext)
+options=()
+changelog=ChangeLog
+source=(
+    "http://download.savannah.gnu.org/releases/attr/attr-${pkgver}.tar.gz"
+)
+sha256sums=(
+    5ead72b358ec709ed00bbf7a9eaef1654baad937c001c044fe8b74c57f5324e7
+)
+
+
+build() {
+    cd_unpacked_src
+    ./configure --prefix=/usr
+    make
+}
+
+package_attr() {
+    pkgfiles=(
+        usr/bin
+    )
+    depends=(
+        libattr.so.1
+        "ld-musl-$(arch).so.1"
+    )
+    std_package
+}
+
+package_libattr() {
+    pkgfiles=(
+        usr/lib/*.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libattr.so.1
+    )
+    std_split_package
+}
+
+package_libattr-dev() {
+    pkgfiles=(
+        usr/include
+        usr/lib/*.a
+        usr/lib/*.so
+    )
+    depends=(
+        "libattr=${pkgver}"
+    )
+    std_split_package
+}
