@@ -1,0 +1,64 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+# Rationale: Required by bash and python
+
+pkgname=(readline readline-dev)
+pkgver=8.2
+pkgrel=1
+pkgdesc='A library for allowing users to edit command lines as they are typed in.'
+arch=('x86_64')
+url='http://www.gnu.org/software/readline/'
+license=('BSD')
+groups=()
+depends=()
+makedepends=(libncurses-dev)
+options=()
+changelog=ChangeLog
+
+PURGE_TARGETS+=(usr/share/info/* usr/share/readline/*)
+
+source=(
+    "https://ftp.gnu.org/gnu/readline/readline-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
+)
+
+
+build() {
+    cd_unpacked_src
+    sed -i '/MV.*old/d' Makefile.in
+    sed -i '/{OLDSUFF}/c:' support/shlib-install
+    CFLAGS='-fPIC' \
+    ./configure \
+      --prefix=/usr
+    make SHLIB_LIBS=-lncursesw
+}
+
+package_readline() {
+    pkgfiles=(
+        usr/lib/*.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libreadline.so.8
+    )
+    std_package
+}
+
+package_readline-dev() {
+    pkgfiles=(
+        usr/include
+        usr/lib/*.a
+        usr/lib/*.so
+        usr/share/man/man3
+    )
+    depends=(
+        "readline=${pkgver}"
+    )
+    std_split_package
+}
