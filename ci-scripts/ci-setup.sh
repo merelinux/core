@@ -45,7 +45,7 @@ else
     for file in $(git diff --name-only main) ; do
         if printf '%s' "$file" | grep -q '^packages/.*/PKGBUILD'; then
             # skip build if package is deleted
-            git log --oneline --full-history -1 -p -- "${unique_pkgs[0]}/PKGBUILD" \
+            git log --oneline --full-history -1 -p -- "$file" \
                 | head | grep -q '^+++ /dev/null' && continue
             pkgs+=("${file%/*}")
         fi
