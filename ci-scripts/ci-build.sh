@@ -3,6 +3,14 @@
 
 . "$CIRCLE_WORKING_DIRECTORY"/.env
 
+signal_hosts(){
+    for host in $DISTCC_HOSTS; do
+        [ "$host" = 'localhost' ] && continue
+        printf 'Sending done signal to %s\n' "${host%:*}"
+        echo 'done' | nc -w 10 "${host%:*}" 40001
+    done
+}
+
 case "$bn" in
     *-parallel|main)
         DISTCC_PORT='40000'
@@ -13,10 +21,12 @@ case "$bn" in
                 DISTCC_HOSTS='localhost'
                 step=1
                 while [ "$step" -lt "$CIRCLE_NODE_TOTAL" ]; do
-                    peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net")
+                    peerhn="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net"
+                    peerip=$(dig +short "$peerhn")
                     until [ -n "$peerip" ]; do
+                        printf 'Waiting for DNS to resolve for %s. Sleeping for 5s...\n' "$peerhn"
                         sleep 5
-                        peerip=$(dig +short "mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net")
+                        peerip=$(dig +short "$peerhn")
                     done
                     DISTCC_HOSTS="${DISTCC_HOSTS} ${peerip}:${DISTCC_PORT}"
                     step=$((step + 1))
@@ -26,6 +36,7 @@ case "$bn" in
 				CC=/usr/lib/distcc/cc
 				CXX=/usr/lib/distcc/c++
 				EOF
+                trap signal_hosts EXIT
                 for pkg in "${pkgs[@]}"; do
                     MEREDIR="$(pwd)/mere-build" ./ci-scripts/buildpkg.sh "$pkg"
                     # List built packages
