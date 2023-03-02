@@ -1,0 +1,36 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=meson
+pkgver=1.0.1
+pkgrel=1
+pkgdesc='An build system tool meant to be both extremely fast and user friendly'
+arch=(x86_64)
+url='https://mesonbuild.com/'
+license=(Apache)
+groups=()
+depends=(
+    "python>=3.10.0"
+)
+makedepends=(python)
+options=()
+changelog=ChangeLog
+source=(
+    "https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    d926b730de6f518728cc7c57bc5e701667bae0c3522f9e369427b2cc7839d3c1
+)
+
+PURGE_TARGETS+=(*.pyc *.policy)
+
+build() {
+    cd_unpacked_src
+    python setup.py build
+}
+
+package() {
+    cd_unpacked_src
+    python setup.py install --root="${pkgdir}" --skip-build
+}
