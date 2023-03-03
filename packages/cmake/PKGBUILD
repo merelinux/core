@@ -1,0 +1,46 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=cmake
+_major_minor=3.25
+pkgver="${_major_minor}.2"
+pkgrel=1
+pkgdesc='The CMake toolsuite for building, testing and packaging software.'
+arch=('x86_64')
+url='https://cmake.org'
+license=('GPL2')
+groups=()
+depends=()
+makedepends=(openssl-dev)
+options=()
+changelog=ChangeLog
+
+source=(
+    "${url}/files/v${_major_minor}/${pkgname}-${pkgver}.tar.gz"
+)
+sha256sums=(
+    c026f22cb931dd532f648f087d587f07a1843c6e66a3dfca4fb0ea21944ed33c
+)
+
+
+build() {
+    cd_unpacked_src
+    ./bootstrap --prefix=/usr
+    make
+}
+
+package() {
+    pkgfiles=(
+        usr/bin
+        usr/share
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+        libc++.so.1
+        libc++abi.so.1
+        libcrypto.so.1.1
+        libssl.so.1.1
+        libunwind.so.1
+    )
+    std_package
+}
