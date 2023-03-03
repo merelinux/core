@@ -8,7 +8,7 @@ signal_hosts(){
     for host in $DISTCC_HOSTS; do
         [ "$host" = 'localhost' ] && continue
         printf 'Sending done signal to %s\n' "${host%:*}"
-        echo 'done' | nc -w 10 "${host%:*}" 40001
+        echo 'done' | nc -w 3 "${host%:*}" 40001
     done
 }
 
