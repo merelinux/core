@@ -4,6 +4,7 @@
 . "$CIRCLE_WORKING_DIRECTORY"/.env
 
 signal_hosts(){
+    set +e
     for host in $DISTCC_HOSTS; do
         [ "$host" = 'localhost' ] && continue
         printf 'Sending done signal to %s\n' "${host%:*}"
