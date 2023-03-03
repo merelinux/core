@@ -1,0 +1,57 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(libffi libffi-dev)
+pkgver=3.4.4
+pkgrel=1
+pkgdesc='A portable Foregin Function Interface library.'
+arch=(x86_64)
+url='http://sourceware.org/libffi/'
+license=(BSD)
+groups=()
+depends=()
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+    "https://github.com/libffi/libffi/releases/download/v${pkgver}/libffi-${pkgver}.tar.gz"
+)
+sha256sums=(
+    d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676
+)
+
+
+build() {
+    cd_unpacked_src
+    CFLAGS+=" -fPIC" \
+      ./configure \
+      --prefix=/usr \
+      --enable-static \
+      --enable-shared \
+      --disable-exec-static-tramp
+    make
+}
+
+package_libffi() {
+    pkgfiles=(
+        usr/lib/libffi.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libffi.so.8
+    )
+    std_package
+}
+
+package_libffi-dev() {
+    pkgfiles=(
+        usr/include
+        usr/lib/*.a
+        usr/lib/*.so
+        usr/lib/pkgconfig
+    )
+    depends=("libffi=${pkgver}")
+    std_split_package
+}
