@@ -1,0 +1,50 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+rationale='file is used by many build scripts'
+pkgname=(file file-dev)
+pkgver=5.44
+pkgrel=1
+pkgdesc='A file-type guesser'
+arch=(x86_64)
+url='https://darwinsys.com/file/'
+license=(BSD)
+groups=()
+depends=()
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+    "ftp://ftp.astron.com/pub/file/file-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    3751c7fba8dbc831cb8d7cc8aff21035459b8ce5155ef8b0880a27d028475f3b
+)
+
+
+build() {
+    cd_unpacked_src
+    sed -i 's/misc/file/' configure
+    LDFLAGS='--static' ./configure --prefix=/usr \
+      --disable-shared \
+      --enable-static
+    make V=1
+}
+
+package_file() {
+    options=()
+    pkgfiles=(
+        usr/bin/file
+        usr/share/file/magic.mgc
+    )
+    std_package
+}
+
+package_file-dev() {
+    pkgfiles=(
+        usr/include
+        usr/lib
+    )
+    std_split_package
+}
