@@ -3,7 +3,7 @@
 
 pkgname=(pacman pacman-build)
 pkgver=6.0.1
-pkgrel=6
+pkgrel=7
 pkgdesc='A lightweight Package Manager'
 arch=(x86_64)
 url='https://www.archlinux.org/pacman/'
@@ -55,7 +55,7 @@ sha256sums=(
     c58ece17155f655c320509979e0116e93ac9b515dd8b1c9cd7966bbf33accfe5
     2cc0b229f9ceb0a7df51237e99fb52410332694a6b0194ef018dbce3258a242f
     689b6064bea140990b6655cba26bc8cb16d1590c090688d169e5c3929d12a1e3
-    de0ab64af214ebba5e0f4abd9e235a423b52d9fc90b38b6b321686fe13d9f777
+    b6e3aa52bd3cfc99018fc1ce0f41f1cb329e4711287c75a538e5158d84b9c6e6
     57345d168a3332a0a07e63e13003d1fb351ca66329283addad23070f7bfdbe59
     4b047a3ce6b9be3e3af4c8641d52446055ce559d935a4eff3918be8783510f7a
     4bd067e3bdfe37ff8f028d8d71685206f8791b0a6f9737a0875e6ddab3394be6
@@ -63,6 +63,9 @@ sha256sums=(
 )
 
 build() {
+    # Bypass broken file.sh for now, can remove later
+    cd "${srcdir}" || return 1
+    tar -xf pacman-${pkgver}.tar.xz
     cd_unpacked_src
     # shellcheck disable=SC2016
     sed -i -e 's/EUID == 0/EUID == -1/' scripts/makepkg.sh.in
