@@ -24,131 +24,141 @@ LIBMAKEPKG_SOURCE_FILE_SH=1
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
+# shellcheck disable=SC1091
 source "$LIBRARY/util/message.sh"
+# shellcheck disable=SC1091
 source "$LIBRARY/util/pkgbuild.sh"
 
 
 download_file() {
-	local netfile=$1
+    local netfile=$1
 
-	local filepath=$(get_filepath "$netfile")
-	if [[ -n "$filepath" ]]; then
-		msg2 "$(gettext "Found %s")" "${filepath##*/}"
-		return
-	fi
+    local filename
+    local filepath
+    local proto
+    local url
 
-	local proto=$(get_protocol "$netfile")
+    filepath=$(get_filepath "$netfile")
+    if [[ -n "$filepath" ]]; then
+        msg2 "$(gettext "Found %s")" "${filepath##*/}"
+        return
+    fi
 
-	# find the client we should use for this URL
-	local -a cmdline
-	IFS=' ' read -a cmdline < <(get_downloadclient "$proto")
-	wait $! || exit
+    proto=$(get_protocol "$netfile")
 
-	local filename=$(get_filename "$netfile")
-	local url=$(get_url "$netfile")
+    # find the client we should use for this URL
+    local -a cmdline
+    IFS=' ' read -r -a cmdline < <(get_downloadclient "$proto")
+    wait $! || exit
 
-	if [[ $proto = "scp" ]]; then
-		# scp downloads should not pass the protocol in the url
-		url="${url##*://}"
-	fi
+    filename=$(get_filename "$netfile")
+    url=$(get_url "$netfile")
 
-	msg2 "$(gettext "Downloading %s...")" "$filename"
+    if [[ $proto = "scp" ]]; then
+        # scp downloads should not pass the protocol in the url
+        url="${url##*://}"
+    fi
 
-	# temporary download file, default to last component of the URL
-	local dlfile="${url##*/}"
+    msg2 "$(gettext "Downloading %s...")" "$filename"
 
-	# replace %o by the temporary dlfile if it exists
-	if [[ ${cmdline[*]} = *%o* ]]; then
-		dlfile=$filename.part
-		cmdline=("${cmdline[@]//%o/$dlfile}")
-	fi
-	# add the URL, either in place of %u or at the end
-	if [[ ${cmdline[*]} = *%u* ]]; then
-		cmdline=("${cmdline[@]//%u/$url}")
-	else
-		cmdline+=("$url")
-	fi
+    # temporary download file, default to last component of the URL
+    local dlfile="${url##*/}"
 
-	if ! command -- "${cmdline[@]}" >&2; then
-		[[ ! -s $dlfile ]] && rm -f -- "$dlfile"
-		error "$(gettext "Failure while downloading %s")" "$url"
-		plainerr "$(gettext "Aborting...")"
-		exit 1
-	fi
+    # replace %o by the temporary dlfile if it exists
+    if [[ ${cmdline[*]} = *%o* ]]; then
+        dlfile=$filename.part
+        cmdline=("${cmdline[@]//%o/$dlfile}")
+    fi
+    # add the URL, either in place of %u or at the end
+    if [[ ${cmdline[*]} = *%u* ]]; then
+        cmdline=("${cmdline[@]//%u/$url}")
+    else
+        cmdline+=("$url")
+    fi
 
-	# rename the temporary download file to the final destination
-	if [[ $dlfile != "$filename" ]]; then
-		mv -f "$SRCDEST/$dlfile" "$SRCDEST/$filename"
-	fi
+    if ! command -- "${cmdline[@]}" >&2; then
+        [[ ! -s $dlfile ]] && rm -f -- "$dlfile"
+        error "$(gettext "Failure while downloading %s")" "$url"
+        plainerr "$(gettext "Aborting...")"
+        exit 1
+    fi
+
+    # rename the temporary download file to the final destination
+    if [[ $dlfile != "$filename" ]]; then
+        mv -f "$SRCDEST/$dlfile" "$SRCDEST/$filename"
+    fi
 }
 
 extract_file() {
-	local netfile=$1
+    local netfile=$1
 
-	local file=$(get_filename "$netfile")
-	local filepath=$(get_filepath "$file")
-	rm -f "$srcdir/${file}"
-	ln -s "$filepath" "$srcdir/"
+    local cmd
+    local ext
+    local file
+    local filepath
+    local filetype
 
-	if in_array "$file" "${noextract[@]}"; then
-		# skip source files in the noextract=() array
-		# these are marked explicitly to NOT be extracted
-		return 0
-	fi
+    file=$(get_filename "$netfile")
+    filepath=$(get_filepath "$file")
 
-	# do not rely on extension for file type
-	local file_type=$(file -S -bizL -- "$file")
-	local ext=${file##*.}
-	local cmd=''
-	case "$file_type" in
-		application/x-tar*|application/zip*|application/x-zip*|application/x-cpio*)
-			cmd="bsdtar"
-            return ;;
-		application/x-gzip*|*application/gzip*)
-			case "$ext" in
-				gz|z|Z) cmd="gzip" ;;
-				*) return;;
-			esac ;;
-		application/x-bzip*)
-			case "$ext" in
-				bz2|bz) cmd="bzip2" ;;
-				*) return;;
-			esac ;;
-		application/x-xz*)
-			case "$ext" in
-				xz) cmd="xz" ;;
-				*) return;;
-			esac ;;
-		application/zstd*)
-			case "$ext" in
-				zst) cmd="zstd" ;;
-				*) return;;
-			esac ;;
-		*)
-			# See if bsdtar can recognize the file
-			if bsdtar -tf "$file" -q '*' &>/dev/null; then
-				cmd="bsdtar"
-			else
-				return 0
-			fi ;;
-	esac
+    # shellcheck disable=SC2154
+    rm -f "$srcdir/${file}"
+    ln -s "$filepath" "$srcdir/"
 
-	local ret=0
-	msg2 "$(gettext "Extracting %s with %s")" "$file" "$cmd"
-	if [[ $cmd = "bsdtar" ]]; then
-		$cmd -xf "$file" || ret=$?
-	else
-		rm -f -- "${file%.*}"
-		$cmd -dcf -- "$file" > "${file%.*}" || ret=$?
-	fi
-	if (( ret )); then
-		error "$(gettext "Failed to extract %s")" "$file"
-		plainerr "$(gettext "Aborting...")"
-		exit 1
-	fi
+    # shellcheck disable=SC2154
+    if in_array "$file" "${noextract[@]}"; then
+        # skip source files in the noextract=() array
+        # these are marked explicitly to NOT be extracted
+        return 0
+    fi
 
-	if (( EUID == 0 )); then
-		# change perms of all source files to root user & root group
-		chown -R 0:0 "$srcdir"
-	fi
+    # Tar will be used for extracting most files. So just try it first.
+    # If it can't then detect file type via file.
+    cmd="bsdtar"
+    if ! bsdtar -tf "$file" -q '*' &>/dev/null; then
+        # do not rely on extension for file type
+        filetype=$(file -S -bizL -- "$file")
+        ext=${file##*.}
+        case "$filetype" in
+            application/x-gzip*|application/gzip*)
+                case "$ext" in
+                    gz|z|Z) cmd="gzip" ;;
+                    *) return;;
+                esac ;;
+            application/x-bzip*)
+                case "$ext" in
+                    bz2|bz) cmd="bzip2" ;;
+                    *) return;;
+                esac ;;
+            application/x-xz*)
+                case "$ext" in
+                    xz) cmd="xz" ;;
+                    *) return;;
+                esac ;;
+            application/zstd*)
+                case "$ext" in
+                    zst) cmd="zstd" ;;
+                    *) return;;
+                esac ;;
+        esac
+    fi
+
+    local ret=0
+    msg2 "$(gettext "Extracting %s with %s")" "$file" "$cmd"
+    if [[ $cmd = "bsdtar" ]]; then
+        $cmd -xf "$file" || ret=$?
+    else
+        rm -f -- "${file%.*}"
+        $cmd -dcf -- "$file" > "${file%.*}" || ret=$?
+    fi
+    if (( ret )); then
+        error "$(gettext "Failed to extract %s")" "$file"
+        plainerr "$(gettext "Aborting...")"
+        exit 1
+    fi
+
+    if (( EUID == 0 )); then
+        # change perms of all source files to root user & root group
+        chown -R 0:0 "$srcdir"
+    fi
 }
