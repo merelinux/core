@@ -1,0 +1,69 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(linux linux-headers)
+pkgver=6.2.2
+pkgrel=1
+pkgdesc='System kernel'
+arch=(x86_64)
+url='http://www.kernel.org'
+license=(GPL2)
+depends=()
+makedepends=(
+    bison
+    flex
+    libelf-dev
+    perl
+    python
+    zlib-ng-dev
+)
+options=()
+changelog=ChangeLog
+source=(
+    "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$pkgver.tar.xz"
+    linux-config
+    busybox-find-compat.patch
+)
+
+sha256sums=(
+    c12755a2bb0e19e83457727e949ee1020cc268f44222488256223da8eeecbfb0
+    ca1151e80fc0e2047181d79d534a8035f0e1c044b8a592bd35b7feb9bb02fbaa
+    c8f3271471fd3c9b576fca983511da87f2f9c14dbc1e6eb1573fe98a771b0481
+)
+
+build() {
+    cd_unpacked_src
+    sed -i 's@/usr/bin/awk@/bin/awk@' scripts/ld-version.sh
+    sed -i '/<stdlib.h>/a #include <linux/stddef.h>' \
+        tools/objtool/arch/x86/decode.c
+    sed -i \
+        -e "/rsync/s@rsync@find usr/include -not -type d -name '*.h' | cpio -dump --quiet \$\(INSTALL_HDR_PATH\); true@" \
+        -e "/^CC/s@gcc@${CC:-cc}@g" \
+        -e "/^HOSTCC/s@gcc@${CC:-cc}@g" Makefile
+    # Some internal build scripts expect the GNU find command.
+    # Specifically, they expect find will have the -printf flag.
+    patch -Np1 -i "${srcdir}/busybox-find-compat.patch"
+    make LLVM=1 LLVM_IAS=1 mrproper
+    cp "${srcdir}/linux-config" .config
+    make LLVM=1 LLVM_IAS=1 -j "$((nproc * nodes * 2))"
+}
+
+package_linux() {
+    groups=(base)
+    cd_unpacked_src
+    make LLVM=1 LLVM_IAS=1 INSTALL_MOD_PATH="$pkgdir" modules_install
+    install -d "${pkgdir}/boot"
+    install "arch/${CARCH}/boot/bzImage" "${pkgdir}/boot/vmlinux"
+    install .config "${pkgdir}/boot/config"
+    # remove build/source links for now
+    rm -f "${pkgdir}/lib/modules/${pkgver}/build" \
+          "${pkgdir}/lib/modules/${pkgver}/source"
+}
+
+package_linux-headers() {
+    groups=(build-base)
+    cd_unpacked_src
+    make LLVM=1 LLVM_IAS=1 INSTALL_HDR_PATH=dest HOSTCFLAGS="-D_GNU_SOURCE" headers_install
+    set -o pipefail
+    find usr -not -type d -name "*.h" | cpio -dump "${pkgdir}"
+}
