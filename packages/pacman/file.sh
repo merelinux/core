@@ -140,6 +140,7 @@ extract_file() {
                     zst) cmd="zstd" ;;
                     *) return;;
                 esac ;;
+            *) return ;;
         esac
     fi
 

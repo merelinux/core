@@ -1,3 +1,7 @@
+6.0.1-8 (2023-03-06)
+
+	Bug fix for file.sh. Don't attempt to extract all files.
+
 6.0.1-7 (2023-03-05)
 
 	Fix file.sh logic
