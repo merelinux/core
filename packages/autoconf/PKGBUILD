@@ -3,9 +3,9 @@
 
 pkgname=autoconf
 pkgver=2.71
-pkgrel=7
+pkgrel=8
 pkgdesc='A tool that produces shell scripts to automatically configure source code.'
-arch=(x86_64)
+arch=(any)
 url='http://www.gnu.org/software/autoconf'
 license=(GPL3)
 groups=()
