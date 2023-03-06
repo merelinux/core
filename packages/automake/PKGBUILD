@@ -1,0 +1,37 @@
+#!/bin/bash
+# shellcheck disable=SC2034
+
+pkgname=automake
+pkgver=1.16.5
+pkgrel=2
+pkgdesc='A tool for automatically generating Makefile.in files.'
+arch=(any)
+url='http://www.gnu.org/software/automake'
+license=(GPL3)
+groups=()
+depends=(autoconf)
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha256sums=(
+    f01d58cd6d9d77fbdca9eb4bbd5ead1988228fdb73d6f7a201f5f8d6b118b469
+)
+
+
+build() {
+    std_build
+}
+
+package() {
+    pkgfiles=(
+        usr/bin
+        usr/share/aclocal-*
+        usr/share/automake-*
+        usr/share/man
+    )
+    std_package
+}
