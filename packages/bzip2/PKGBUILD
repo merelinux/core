@@ -1,9 +1,9 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154,SC2068
 
-pkgname=(bzip2 libbzip2-dev)
+pkgname=(bzip2 libbz2 libbz2-dev)
 pkgver=1.0.8
-pkgrel=3
+pkgrel=4
 pkgdesc='A freely available, patent free, high-quality data compressor lib'
 arch=(x86_64)
 url=https://www.sourceware.org/bzip2
@@ -24,7 +24,8 @@ sha256sums=(
 build() {
     cd_unpacked_src
     sed -i 's@(PREFIX)/man@(PREFIX)/share/man@g' Makefile
-    make CC="cc $CFLAGS -static"
+    make CC='cc' -f Makefile-libbz2_so
+    make CC='cc'
 }
 
 package_bzip2() {
@@ -32,15 +33,37 @@ package_bzip2() {
         usr/bin
         usr/share/man
     )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
     cd_unpacked_src
     make PREFIX="${pkgdirbase}/dest/usr" install
+    cp -av libbz2.so.* "${pkgdirbase}/dest/usr/lib/"
+    ln -sv libbz2.so.${pkgver} "${pkgdirbase}/dest/usr/lib/libbz2.so"
     std_split_package
 }
 
-package_libbzip2-dev() {
+package_libbz2() {
+    pkgfiles=(
+        usr/lib/lib*.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libbz2.so.1.0
+    )
+    std_split_package
+}
+
+package_libbz2-dev() {
     pkgfiles=(
         usr/include
         usr/lib/lib*.a
+        usr/lib/lib*.so
+    )
+    depends=(
+        "libbzip2=${pkgver}"
     )
     std_split_package
 }
