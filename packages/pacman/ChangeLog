@@ -1,3 +1,7 @@
+6.0.1-9 (2023-12-17)
+
+	Change default target triplet. Switch from 'pc' to 'unknown'.
+
 6.0.1-8 (2023-03-06)
 
 	Bug fix for file.sh. Don't attempt to extract all files.
