@@ -4,7 +4,7 @@ bn="$(git rev-parse --abbrev-ref HEAD)"
 
 pkgs=()
 case "$bn" in
-    *-parallel)
+    main)
     # install pacman-build
     install -d /tmp/pacman
     curl -LO http://pkgs.merelinux.org/core/pacman-latest-x86_64.pkg.tar.xz
