@@ -57,6 +57,27 @@ jobs:
       - run:
           name: Test package
           command: ./ci-scripts/ci-test.sh
+  build-main:
+    executor: build-machine
+    steps:
+      - checkout
+      - run:
+          name: Setup Build
+          command: ./ci-scripts/ci-setup.sh
+      - run:
+          name: Build package
+          command: ./ci-scripts/ci-build.sh
+          no_output_timeout: 20m
+      - run:
+          name: Test package
+          command: ./ci-scripts/ci-test.sh
+      - run:
+          name: Upload package
+          command: ./ci-scripts/ci-upload.sh
+      - run:
+          name: Cleanup
+          command: sudo tailscale logout
+          when: always
 
 workflows:
   version: 2
@@ -69,6 +90,15 @@ workflows:
       - lint
       - build-parallel
   single:
+    when:
+      not:
+        equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - lint
       - build
+  main:
+    when:
+      equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - lint
+      - build-main
