@@ -3,7 +3,8 @@
 bn="$(git rev-parse --abbrev-ref HEAD)"
 
 pkgs=()
-if [ "$bn" = 'main' ] ; then
+case "$bn" in
+    *-parallel)
     # install pacman-build
     install -d /tmp/pacman
     curl -LO http://pkgs.merelinux.org/core/pacman-latest-x86_64.pkg.tar.xz
@@ -41,7 +42,8 @@ if [ "$bn" = 'main' ] ; then
             fi
         done
     done
-else
+    ;;
+    *)
     for file in $(git diff --name-only main) ; do
         if printf '%s' "$file" | grep -q '^packages/.*/PKGBUILD'; then
             # skip build if package is deleted
@@ -50,7 +52,8 @@ else
             pkgs+=("${file%/*}")
         fi
     done
-fi
+    ;;
+esac
 
 printf 'pkgs is: %s\n' "${pkgs[@]}"
 mapfile -t unique_pkgs < <(printf '%s\n' "${pkgs[@]}" | sort -u)

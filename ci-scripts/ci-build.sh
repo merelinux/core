@@ -13,7 +13,7 @@ signal_hosts(){
 }
 
 case "$bn" in
-    *-parallel|main)
+    *-parallel)
         DISTCC_PORT='40000'
         DISTCC_CIDR='172.0.0.0/8'
 
