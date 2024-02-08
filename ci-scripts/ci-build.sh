@@ -22,7 +22,7 @@ case "$bn" in
                 DISTCC_HOSTS='localhost'
                 step=1
                 while [ "$step" -lt "$CIRCLE_NODE_TOTAL" ]; do
-                    peerhn="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.tail94b04.ts.net"
+                    peerhn="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${step}.${TS_DOMAIN}"
                     peerip=$(dig +short "$peerhn")
                     until [ -n "$peerip" ]; do
                         printf 'Waiting for DNS to resolve for %s. Sleeping for 5s...\n' "$peerhn"
