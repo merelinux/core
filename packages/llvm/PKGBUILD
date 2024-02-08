@@ -2,7 +2,8 @@
 # shellcheck disable=SC2034,SC2154,SC2068,SC2086
 
 pkgname=(llvm llvm-dev libLLVM libclang libcxx libunwind)
-pkgver=15.0.7
+_ver_major=17
+pkgver=${_ver_major}.0.6
 pkgrel=1
 pkgdesc='A collection of modular and reusable compiler and toolchain technologies.'
 arch=('x86_64')
@@ -25,7 +26,7 @@ source=(
 )
 
 sha256sums=(
-    8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6
+    58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813
 )
 
 _binfiles=(
@@ -35,7 +36,7 @@ _binfiles=(
         usr/bin/cc
         usr/bin/clang
         usr/bin/clang++
-        usr/bin/clang-15
+        "usr/bin/clang-${_ver_major}"
         usr/bin/clang-cl
         usr/bin/clang-cpp
         usr/bin/ld.lld
@@ -146,7 +147,7 @@ package_llvm() {
         musl-dev
     )
     provides=(
-        libLTO.so.15
+        "libLTO.so.${_ver_major}"
     )
     groups=(build-base)
     cd_unpacked_src
@@ -199,12 +200,12 @@ package_llvm-dev() {
     )
     std_split_package
     rm "${pkgdir}/usr/include/llvm-c/lto.h"
-    find "${pkgdir}/usr/lib/" -name "libLLVM-15*so" -delete
+    find "${pkgdir}/usr/lib/" -name "libLLVM-${_ver_major}*so" -delete
 }
 
 package_libLLVM() {
     pkgfiles=(
-        usr/lib/libLLVM-15*so
+        "usr/lib/libLLVM-${_ver_major}*so"
     )
     depends=(
         "ld-musl-$(arch).so.1"
@@ -214,7 +215,7 @@ package_libLLVM() {
         libz.so.1
     )
     provides=(
-        libLLVM-15.so
+        "libLLVM-${_ver_major}.so"
     )
     std_split_package
 }
@@ -231,7 +232,7 @@ package_libclang() {
         libz.so.1
     )
     provides=(
-        libclang.so.15
+        "libclang.so.${_ver_major}"
     )
     std_split_package
 }
