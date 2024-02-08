@@ -62,23 +62,13 @@ workflows:
   version: 2
   parallel:
     when:
-      or:
-        - matches:
-            pattern: "^.*-parallel$"
-            value: << pipeline.git.branch >>
-        - equal: [ main, << pipeline.git.branch >> ]
+      matches:
+        pattern: "^.*-parallel$"
+        value: << pipeline.git.branch >>
     jobs:
       - lint
       - build-parallel
   single:
-    when:
-      and:
-        - not:
-            matches:
-              pattern: "^.*-parallel$"
-              value: << pipeline.git.branch >>
-        - not:
-            equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - lint
       - build
