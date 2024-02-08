@@ -3,7 +3,7 @@
 
 pkgname=(argp-standalone-dev)
 pkgver=1.4.1
-pkgrel=4
+pkgrel=5
 pkgdesc="An argp library for systems which don't provide one themselves (most non-GNU ones)"
 arch=(x86_64)
 url='https://github.com/ericonr/argp-standalone'
