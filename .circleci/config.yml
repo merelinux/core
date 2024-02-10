@@ -74,11 +74,6 @@ jobs:
       - run:
           name: Upload package
           command: ./ci-scripts/ci-upload.sh
-      - run:
-          name: Cleanup
-          command: sudo tailscale logout
-          when: always
-
 workflows:
   version: 2
   parallel:

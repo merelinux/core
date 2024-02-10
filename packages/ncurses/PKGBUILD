@@ -8,7 +8,7 @@ pkgname=(
     libncurses-dev
 )
 pkgver=6.4
-pkgrel=1
+pkgrel=2
 pkgdesc='An API for writing text-based user interfaces'
 arch=(x86_64)
 url='https://invisible-island.net/ncurses'
@@ -28,7 +28,7 @@ source=(
 )
 sha256sums=(
     6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159
-    11007fdad0867408cd14b93ec4ec4eb4f39370bbf0520957c9826db4fa6d66fd
+    e53ce12919e351d46ccd0a8a6ac595764d5bfe9b688b74830a522a3959f3b02d
 )
 
 
