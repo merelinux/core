@@ -5,7 +5,7 @@
 
 pkgname=(asignify libasignify-dev)
 pkgver=1.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Yet another signify tool'
 arch=(x86_64)
 url='https://github.com/vstakhov/asignify'
@@ -16,12 +16,12 @@ makedepends=(cmake git)
 options=()
 changelog=ChangeLog
 source=(
-    "asignify::git+${url}.git#commit=d6b3651"
     libasignify.pc
+    "asignify::git+${url}.git#commit=d6b3651"
 )
 sha256sums=(
-    SKIP
     11720204c4275e4f044dcec16ccd1914f27e72e1361c34703cb4c78f16698135
+    SKIP
 )
 
 
