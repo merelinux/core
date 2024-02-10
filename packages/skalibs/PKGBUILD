@@ -6,7 +6,7 @@ pkgname=(
     skalibs-dev
 )
 pkgver=2.14.1.1
-pkgrel=1
+pkgrel=2
 pkgdesc='A library suite supporting skarnet.org software.'
 arch=(x86_64)
 url=http://skarnet.org/software/skalibs/
