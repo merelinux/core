@@ -66,7 +66,7 @@ pkgs=(${unique_pkgs[@]})
 EOF
 
 case "$bn" in
-    *-parallel|main)
+    *-parallel)
         curl -fsSL https://tailscale.com/install.sh | sudo sh
         sudo tailscale up --authkey="$TS_KEY" \
             --hostname="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${CIRCLE_NODE_INDEX}"
