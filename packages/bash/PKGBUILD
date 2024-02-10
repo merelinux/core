@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154
 
 pkgname=bash
-pkgver=5.2.15
+pkgver=5.2.26
 pkgrel=1
 pkgdesc='A full-featured sh-compatible shell.'
 arch=(x86_64)
@@ -15,18 +15,33 @@ options=()
 changelog=ChangeLog
 
 source=(
-    "http://ftp.gnu.org/gnu/bash/${pkgname}-${pkgver}.tar.gz"
+    "http://ftp.gnu.org/gnu/bash/${pkgname}-5.2.21.tar.gz"
+    https://ftp.gnu.org/gnu/bash/bash-5.2-patches/bash52-022
+    https://ftp.gnu.org/gnu/bash/bash-5.2-patches/bash52-023
+    https://ftp.gnu.org/gnu/bash/bash-5.2-patches/bash52-024
+    https://ftp.gnu.org/gnu/bash/bash-5.2-patches/bash52-025
+    https://ftp.gnu.org/gnu/bash/bash-5.2-patches/bash52-026
     bashrc
 )
 
 sha256sums=(
-    13720965b5f4fc3a0d4b61dd37e7565c741da9a5be24edc2ae00182fc1b3588c
+    c8e31bdc59b69aaffc5b36509905ba3e5cbb12747091d27b4b977f078560d5b8
+    78b5230a49594ec30811e72dcd0f56d1089710ec7828621022d08507aa57e470
+    af905502e2106c8510ba2085aa2b56e64830fc0fdf6ee67ebb459ac11696dcd3
+    971534490117eb05d97d7fd81f5f9d8daf927b4d581231844ffae485651b02c3
+    5138f487e7cf71a6323dc81d22419906f1535b89835cc2ff68847e1a35613075
+    96ee1f549aa0b530521e36bdc0ba7661602cfaee409f7023cac744dd42852eac
     69ba8775a43461ef74f814e9d32a52fb481f27b2c0666ab145dcf1ea748acc13
 )
 
 
 build() {
     cd_unpacked_src
+    patch -Np2 -i "${srcdir}"/bash52-022
+    patch -Np2 -i "${srcdir}"/bash52-023
+    patch -Np2 -i "${srcdir}"/bash52-024
+    patch -Np2 -i "${srcdir}"/bash52-025
+    patch -Np2 -i "${srcdir}"/bash52-026
     ./configure --prefix=/ \
         --enable-static-link \
         --mandir=/usr/share/man \
