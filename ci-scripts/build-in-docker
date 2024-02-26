@@ -1,6 +1,8 @@
 #!/bin/sh -e
 
 pacman -Syu --noconfirm
+# Running twice allows dependencies to sort themselves out
+pacman -Syu --noconfirm
 
 # Clear the shell's cached paths of binaries, in case something moved
 hash -r
