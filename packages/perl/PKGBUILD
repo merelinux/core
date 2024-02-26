@@ -2,8 +2,8 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(perl)
-pkgver=5.36.0
-pkgrel=2
+pkgver=5.38.2
+pkgrel=1
 pkgdesc='An API for writing text-based user interfaces.'
 arch=('x86_64')
 url='http://www.perl.org'
@@ -18,7 +18,7 @@ source=(
     "http://www.cpan.org/src/5.0/perl-${pkgver}.tar.xz"
 )
 sha256sums=(
-    0f386dccbee8e26286404b2cca144e1005be65477979beb9b1ba272d4819bcf0
+    d91115e90b896520e83d4de6b52f8254ef2b70a8d545ffab33200ea9f1cf29e8
 )
 
 
