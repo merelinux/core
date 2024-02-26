@@ -1,8 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154,SC2068
 
-pkgname=(openssl libssl-1 openssl-dev)
-pkgver=1.1.1w
+pkgname=(openssl libssl-3 openssl-dev)
+pkgver=3.2.1
 pkgrel=1
 pkgdesc='a toolkit for the TLS and SSL protocols'
 arch=(x86_64)
@@ -21,7 +21,7 @@ source=(
     "https://www.openssl.org/source/openssl-${pkgver}.tar.gz"
 )
 sha256sums=(
-    cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
+    83c7329fe52c850677d75e5d0b0ca245309b97e8ecbcfdc1dfdc4ab9fac35b39
 )
 
 
@@ -38,8 +38,8 @@ build() {
 package_openssl() {
     depends=(
         "ld-musl-$(arch).so.1"
-        libcrypto.so.1.1
-        libssl.so.1.1
+        libcrypto.so.3
+        libssl.so.3
     )
     pkgfiles=(
         etc/ssl/*.cnf
@@ -50,27 +50,24 @@ package_openssl() {
     std_package
 }
 
-package_libssl-1() {
+package_libssl-3() {
     pkgfiles=(
-        usr/lib/engines-1.1
+        usr/lib/engines-3
         usr/lib/lib*.so.*
     )
     depends=(
         "ld-musl-$(arch).so.1"
     )
     provides=(
-        libcrypto.so.1.1
-        libssl.so.1.1
-    )
-    conflicts=(
-        "openssl<${pkgver}"
+        libcrypto.so.3
+        libssl.so.3
     )
     std_split_package
 }
 
 package_openssl-dev() {
     depends=(
-        "libssl-1=${pkgver}"
+        "libssl-3=${pkgver}"
     )
     pkgfiles=(
         usr/include
