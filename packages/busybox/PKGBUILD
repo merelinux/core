@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154
 
 pkgname=busybox
-pkgver=1.36.0
+pkgver=1.36.1
 pkgrel=1
 pkgdesc='Tiny versions of common UNIX utilities built into a single binary'
 arch=(x86_64)
@@ -35,7 +35,7 @@ source=(
 )
 
 sha256sums=(
-    542750c8af7cb2630e201780b4f99f3dcceeb06f505b479ec68241c1e6af61a5
+    b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314
     08b850b788636f6c829e865414fc6305bdc1ffc6e1ec74083ab1256b6a38d0a7
     d12ecedf18ef310b1627194e7db4a4642ad6c5fd59f45c549af1efecb359c48e
     3e0c3b046209525a6ac08b56406d7753a196ace08c127ff7423a8af5b91e0cbe
