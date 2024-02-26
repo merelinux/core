@@ -3,7 +3,7 @@
 
 pkgname=(bzip2 libbz2 libbz2-dev)
 pkgver=1.0.8
-pkgrel=5
+pkgrel=6
 pkgdesc='A freely available, patent free, high-quality data compressor lib'
 arch=(x86_64)
 url=https://www.sourceware.org/bzip2
