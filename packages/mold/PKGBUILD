@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(mold)
-pkgver=1.10.1
+pkgver=2.4.0
 pkgrel=1
 pkgdesc='A Modern Linker'
 arch=(x86_64)
@@ -13,14 +13,12 @@ depends=(
     "ld-musl-$(arch).so.1"
     libc++.so.1
     libc++abi.so.1
-    libcrypto.so.1.1
     libunwind.so.1
     libz.so.1
 )
 makedepends=(
 	cmake
 	ninja
-	openssl-dev
 	zlib-ng-dev
 )
 options=()
@@ -30,7 +28,7 @@ source=(
 )
 
 sha256sums=(
-    19e4aa16b249b7e6d2e0897aa1843a048a0780f5c76d8d7e643ab3a4be1e4787
+    be65f3d785d32ece7b3204ecaa57810847fdd25c232cf704cbfff2dafb1ac107
 )
 
 build() {
@@ -41,6 +39,7 @@ build() {
         -DCMAKE_BUILD_TYPE=Release \
         -DCLANG_BUILD_EXAMPLES=OFF \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib \
         ..
     ninja
 }
