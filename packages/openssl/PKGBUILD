@@ -1,8 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154,SC2068
 
-pkgname=(openssl openssl-dev)
-pkgver=1.1.1t
+pkgname=(openssl libssl-1 openssl-dev)
+pkgver=1.1.1w
 pkgrel=1
 pkgdesc='a toolkit for the TLS and SSL protocols'
 arch=(x86_64)
@@ -21,15 +21,15 @@ source=(
     "https://www.openssl.org/source/openssl-${pkgver}.tar.gz"
 )
 sha256sums=(
-    8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b
+    cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
 )
 
 
 build() {
     cd_unpacked_src
-    sed -i -e "/stdio.h/s@\$@\n#include <string.h>@" test/v3ext.c
     ./Configure \
         --prefix=/usr \
+        --libdir=/usr/lib \
         --openssldir=/etc/ssl \
         linux-x86_64-clang
     make
@@ -38,26 +38,39 @@ build() {
 package_openssl() {
     depends=(
         "ld-musl-$(arch).so.1"
-    )
-    provides=(
         libcrypto.so.1.1
         libssl.so.1.1
     )
     pkgfiles=(
         etc/ssl/*.cnf
         usr/bin/openssl
-        usr/lib/engines-1.1
-        usr/lib/lib*.so.*
-        usr/share/man/man1
         usr/share/man/man5
         usr/share/man/man7
     )
     std_package
 }
 
+package_libssl-1() {
+    pkgfiles=(
+        usr/lib/engines-1.1
+        usr/lib/lib*.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libcrypto.so.1.1
+        libssl.so.1.1
+    )
+    conflicts=(
+        "openssl<${pkgver}"
+    )
+    std_split_package
+}
+
 package_openssl-dev() {
     depends=(
-        "openssl=${pkgver}"
+        "libssl-1=${pkgver}"
     )
     pkgfiles=(
         usr/include
