@@ -1,3 +1,8 @@
+6.0.1-11 (2024-02-27)
+
+	Add a public key for mere packages and set default config to require 
+	signatures
+
 6.0.1-10 (2024-02-26)
 
 	Remove custom file.sh
