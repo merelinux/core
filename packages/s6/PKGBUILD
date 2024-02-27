@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(s6 s6-dev)
-pkgver=2.11.3.0
+pkgver=2.12.0.3
 pkgrel=1
 pkgdesc='A small process supervision suite for UNIX.'
 arch=(x86_64)
@@ -30,7 +30,7 @@ source=(
 )
 
 sha256sums=(
-    0ef2de80c40b603d58bf65ec5dd9f0bb1f227d35f311e8948d9e30f81efb5b81
+    800d31226f6c25cdd3ec0b65240f80b56ce5ec137341d0a8d154e77638e58103
     719101b2a26b1e85dd40f5e69fad66ad866ce1ac79764ada4b3ef0b5c62cfc89
     db0e8c503e72eb05356a4ec9a65903a6d6447b5786453d0d8dbf097534c89ad5
     6ba76e90d72d7e59763a0ec42304d46abfd17548b1d52485dcf2e5306998887e
