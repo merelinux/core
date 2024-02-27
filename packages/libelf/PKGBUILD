@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(libelf libelf-dev)
-pkgver=0.189
+pkgver=0.190
 pkgrel=1
 pkgdesc='A collection of utilities and libraries to read, create and modify ELF binary files'
 arch=(x86_64)
@@ -23,7 +23,7 @@ source=(
 )
 
 sha256sums=(
-    39bd8f1a338e2b7cd4abc3ff11a0eddc6e690f69578a57478d8179b4148708c8
+    8e00a3a9b5f04bc1dc273ae86281d2d26ed412020b391ffcc23198f10231d692
 )
 
 
