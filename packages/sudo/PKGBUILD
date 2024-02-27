@@ -1,0 +1,57 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(sudo)
+pkgver=1.9.15p5
+pkgrel=1
+pkgdesc='Tool for delegating authority to users and groups.'
+arch=(x86_64)
+url='http://www.sudo.ws/'
+license=(BSD)
+groups=()
+depends=()
+makedepends=(
+    skalibs-dev
+    utmps-dev
+)
+options=(emptydirs)
+changelog=ChangeLog
+source=(
+    "http://www.sudo.ws/sudo/dist/sudo-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    558d10b9a1991fb3b9fa7fa7b07ec4405b7aefb5b3cb0b0871dbc81e3a88e558
+)
+
+
+build() {
+    cd_unpacked_src
+    LIBS='-lutmps -lskarnet' \
+      ./configure \
+      --prefix=/usr \
+      --libexecdir=/usr/lib/sudo
+    make
+}
+
+package() {
+    options=(emptydirs)
+    backup=(etc/sudoers etc/sudo.conf)
+    pkgfiles=(
+        etc/sudo.conf
+        etc/sudoers
+        etc/sudoers.d
+        usr/bin
+        usr/lib
+        usr/sbin
+        usr/share/man
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+        libskarnet.so.2.14
+    )
+    provides=(
+        libsudo_util.so.0
+    )
+    std_package
+}
