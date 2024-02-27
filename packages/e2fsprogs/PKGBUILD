@@ -3,7 +3,7 @@
 
 pkgname=(e2fsprogs)
 pkgver=1.47.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Filesystem utilities for ext2, ext3 and ext4.'
 arch=(x86_64)
 url=http://e2fsprogs.sourceforge.net/
@@ -26,6 +26,7 @@ build() {
     LDFLAGS='--static' \
         ac_cv_c_compiler_gnu=no \
         ac_cv_lib_dl_dlopen=no \
+        ac_cv_func_lseek64=yes \
         ac_cv_path_mkdir=/bin/mkdir \
         ./configure --prefix=/usr \
             --sysconfdir=/etc \
