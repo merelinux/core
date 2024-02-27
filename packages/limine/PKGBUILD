@@ -3,14 +3,14 @@
 
 pkgname=(limine)
 pkgver=7.0.5
-pkgrel=1
+pkgrel=2
 pkgdesc='Modern, advanced, portable, multiprotocol bootloader.'
 arch=(x86_64)
 url='https://limine-bootloader.org/'
 license=(BSD-2-Clause)
 groups=()
 depends=()
-makedepends=()
+makedepends=(nasm)
 options=()
 changelog=ChangeLog
 source=(
@@ -23,10 +23,18 @@ sha256sums=(
 
 
 build() {
+    cd_unpacked_src
     export LDFLAGS='--static'
-    std_build
+    ./configure --prefix=/usr \
+        --enable-uefi-x86-64
+    make
 }
 
 package() {
+    pkgfiles=(
+        usr/bin/limine
+        usr/share/limine
+        usr/share/man/man1
+    )
     std_package
 }
