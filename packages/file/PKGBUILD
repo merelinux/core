@@ -3,8 +3,8 @@
 
 rationale='file is used by many build scripts'
 pkgname=(file file-dev)
-pkgver=5.44
-pkgrel=2
+pkgver=5.45
+pkgrel=1
 pkgdesc='A file-type guesser'
 arch=(x86_64)
 url='https://darwinsys.com/file/'
@@ -22,7 +22,7 @@ source=(
 )
 
 sha256sums=(
-    3751c7fba8dbc831cb8d7cc8aff21035459b8ce5155ef8b0880a27d028475f3b
+    fc97f51029bb0e2c9f4e3bffefdaf678f0e039ee872b9de5c002a6d09c784d82
 )
 
 
