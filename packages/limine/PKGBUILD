@@ -1,0 +1,32 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(limine)
+pkgver=7.0.5
+pkgrel=1
+pkgdesc='Modern, advanced, portable, multiprotocol bootloader.'
+arch=(x86_64)
+url='https://limine-bootloader.org/'
+license=(BSD-2-Clause)
+groups=()
+depends=()
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+   "https://github.com/limine-bootloader/limine/releases/download/v${pkgver}/limine-${pkgver}.tar.xz"
+)
+
+sha256sums=(
+    b5f44cc02e5e46a310a647f737f8cf16ee75f31df51398d8122e8ed2cdd956c8
+)
+
+
+build() {
+    export LDFLAGS='--static'
+    std_build
+}
+
+package() {
+    std_package
+}
