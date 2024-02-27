@@ -3,7 +3,7 @@
 
 pkgname=(musl-fts-dev)
 pkgver=1.2.7
-pkgrel=2
+pkgrel=3
 pkgdesc='Implements the fts(3) functions for musl'
 arch=(x86_64)
 url='https://github.com/void-linux/musl-fts'
