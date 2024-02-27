@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(execline execline-dev)
-pkgver=2.9.2.1
+pkgver=2.9.4.0
 pkgrel=1
 pkgdesc='a (non-interactive) scripting language.'
 arch=(x86_64)
@@ -18,7 +18,7 @@ source=(
 )
 
 sha256sums=(
-    dbccdd95bcee4b33d4d4cb7544ab92903ba2e2764165ddc8f395b67755b20405
+    9ab55d561539dfa76ff4a97906fa995fc4a288e3de5225cb1a9d8fa9e9ebc49b
 )
 
 
@@ -26,7 +26,8 @@ build() {
     cd_unpacked_src
     ./configure \
       --prefix=/ \
-      --enable-static-libc
+      --enable-static-libc \
+      --enable-multicall
     make
 }
 
