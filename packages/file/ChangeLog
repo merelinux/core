@@ -1,3 +1,7 @@
+5.45-1 (2024-02-27)
+
+	Upgrade to 5.45
+
 5.44-2 (2023-03-06)
 
 	Dynamically link to zlib and libz2
