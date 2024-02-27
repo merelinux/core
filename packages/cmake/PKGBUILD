@@ -2,8 +2,8 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=cmake
-_major_minor=3.25
-pkgver="${_major_minor}.2"
+_major_minor=3.28
+pkgver="${_major_minor}.3"
 pkgrel=1
 pkgdesc='The CMake toolsuite for building, testing and packaging software.'
 arch=('x86_64')
@@ -19,7 +19,7 @@ source=(
     "${url}/files/v${_major_minor}/${pkgname}-${pkgver}.tar.gz"
 )
 sha256sums=(
-    c026f22cb931dd532f648f087d587f07a1843c6e66a3dfca4fb0ea21944ed33c
+    72b7570e5c8593de6ac4ab433b73eab18c5fb328880460c86ce32608141ad5c1
 )
 
 
@@ -38,8 +38,8 @@ package() {
         "ld-musl-$(arch).so.1"
         libc++.so.1
         libc++abi.so.1
-        libcrypto.so.1.1
-        libssl.so.1.1
+        libcrypto.so.3
+        libssl.so.3
         libunwind.so.1
     )
     std_package
