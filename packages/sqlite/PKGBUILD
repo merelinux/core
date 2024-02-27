@@ -2,8 +2,8 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(sqlite libsqlite libsqlite-dev)
-pkgver=3.41.0
-_pkgaltver=3410000
+pkgver=3.45.1
+_pkgaltver=3450100
 pkgrel=1
 pkgdesc='A self-contained embedded SQL database engine.'
 arch=('x86_64')
@@ -18,11 +18,11 @@ options=()
 changelog=ChangeLog
 
 source=(
-    "https://sqlite.org/2023/sqlite-autoconf-${_pkgaltver}.tar.gz"
+    "https://sqlite.org/2024/sqlite-autoconf-${_pkgaltver}.tar.gz"
 )
 
 sha256sums=(
-    49f77ac53fd9aa5d7395f2499cb816410e5621984a121b858ccca05310b05c70
+    cd9c27841b7a5932c9897651e20b86c701dd740556989b01ca596fcfa3d49a0a
 )
 
 
