@@ -3,7 +3,7 @@
 
 pkgname=(python python-dev)
 _vermajor=3
-_verminor=11
+_verminor=12
 pkgver=${_vermajor}.${_verminor}.2
 pkgrel=1
 pkgdesc='A clear and powerful object-oriented programming language,'
@@ -13,7 +13,7 @@ license=(Python)
 groups=()
 depends=()
 makedepends=(
-    libbzip2-dev
+    libbz2-dev
     libffi-dev
     liblzma-dev
     libncurses-dev
@@ -25,23 +25,21 @@ makedepends=(
 options=()
 changelog=ChangeLog
 
-# Last patch adapted from:
-# https://patch-diff.githubusercontent.com/raw/python/cpython/pull/18380.patch
 source=(
     "https://www.python.org/ftp/python/${pkgver}/Python-${pkgver}.tar.xz"
-    python-fix-ctypes_util.patch
+    "https://git.alpinelinux.org/aports/plain/main/python3/musl-find_library.patch"
 )
 sha256sums=(
-    29e4b8f5f1658542a8c13e2dd277358c9c48f2b2f7318652ef1675e402b9d2af
-    e673e3149a4a819aed22d6b221e82f6ab6f4dcdc3c23030448a7259cf650a698
+    be28112dac813d2053545c14bf13a16401a21877f1a69eb6ea5d84c4a0f3d870
+    83fd071bc556d4e88373a35fde74cb9c464ee4b8e95e5583b55f2e36d4f33cf2
 )
 
 
 build() {
     cd_unpacked_src
-    patch -Np1 -i "${srcdir}/python-fix-ctypes_util.patch"
     # Fix for multiarch detection on musl
     sed -i '/--print-multiarch/s@MULTIARCH=.*@MULTIARCH=""@' configure
+    patch -Np1 -i "${srcdir}/musl-find_library.patch"
     ./configure \
         --prefix=/usr \
         --sysconfdir=/etc \
@@ -53,17 +51,19 @@ build() {
 
 check() {
     cd_unpacked_src
-    #make test
+    expected_fail='test__locale test_c_locale_coercion test_ctypes test_locale test_os test_re'
+    make quicktest TESTOPTS="--exclude $expected_fail"
 }
 
 package_python() {
     depends=(
         "ld-musl-$(arch).so.1"
-        libcrypto.so.1.1
+        libbz2.so.1.0
+        libcrypto.so.3
         libffi.so.8
         libreadline.so.8
         libsqlite3.so.0
-        libssl.so.1.1
+        libssl.so.3
         libz.so.1
     )
     pkgfiles=(
