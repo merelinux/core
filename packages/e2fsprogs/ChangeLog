@@ -1,3 +1,7 @@
+1.47.0-3 (2024-02-27)
+
+	Force detection of lseek64 which is present
+
 1.47.0-2 (2024-02-27)
 
 	Rebuild and sign package
@@ -12,7 +16,7 @@
 
 1.46.3-2 (2021-09-15)
 
-	Remove libblkid and libuuid and blkid from e2fsprogs, providing via 
+	Remove libblkid and libuuid and blkid from e2fsprogs, providing via
 	util-linux
 
 1.46.3-1 (2021-08-18)
