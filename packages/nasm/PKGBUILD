@@ -1,0 +1,39 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=nasm
+pkgver=2.16.01
+pkgrel=1
+pkgdesc='the Netwide Assembler (NASM), an asssembler for the x86 CPU architecture'
+arch=(x86_64)
+url='http://www.nasm.us'
+license=(BSD)
+groups=()
+depends=()
+makedepends=(
+)
+options=()
+changelog=ChangeLog
+source=(
+    "http://www.nasm.us/pub/nasm/releasebuilds/${pkgver}/nasm-${pkgver}.tar.xz"
+)
+
+sha256sums=(
+    c77745f4802375efeee2ec5c0ad6b7f037ea9c87c92b149a9637ff099f162558
+)
+
+
+build() {
+    std_build
+}
+
+package() {
+    pkgfiles=(
+        usr/bin
+        usr/share/man/man1
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    std_package
+}
