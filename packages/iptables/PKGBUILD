@@ -1,0 +1,50 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=iptables
+pkgver=1.8.10
+pkgrel=1
+pkgdesc='Packet filtering for Linux'
+arch=(x86_64)
+url='http://www.netfilter.org/'
+license=(GPL)
+groups=()
+depends=()
+makedepends=(zlib-ng-dev)
+options=()
+changelog=ChangeLog
+source=(
+    "https://www.netfilter.org/projects/iptables/files/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha256sums=(
+    5cc255c189356e317d070755ce9371eb63a1b783c34498fb8c30264f3cc59c9c
+)
+
+
+build() {
+    cd_unpacked_src
+    # Remove incompatible header
+    sed -i '/if_ether.h/d' libxtables/xtables.c
+    # Add missing header
+    sed -i "/stdint.h/s@\$@\n#include <sys/types.h>@" iptables/xshared.h
+    LDFLAGS='--static' \
+      ./configure --prefix='' \
+      --disable-shared \
+      --enable-static \
+      --disable-nftables \
+      --enable-libipq \
+      --mandir=/usr/share/man \
+      --with-xtlibdir=/lib/xtables
+    make
+}
+
+package() {
+    pkgfiles=(
+        bin
+        sbin
+        usr/share/man/man1
+        usr/share/man/man8
+    )
+    std_package
+}
