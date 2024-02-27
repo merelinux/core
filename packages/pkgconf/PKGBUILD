@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=pkgconf
-pkgver=1.9.4
+pkgver=2.1.1
 pkgrel=1
 pkgdesc='An API-driven pkg-config replacement'
 arch=(x86_64)
@@ -18,7 +18,7 @@ source=(
 )
 
 sha256sums=(
-    daccf1bbe5a30d149b556c7d2ffffeafd76d7b514e249271abdd501533c1d8ae
+    3a224f2accf091b77a5781316e27b9ee3ba82c083cc2e539e08940b68a44fec5
 )
 
 
