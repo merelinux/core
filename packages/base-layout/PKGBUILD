@@ -2,8 +2,8 @@
 # shellcheck disable=SC2034,SC2154
 
 pkgname=base-layout
-pkgver=2.0.6
-pkgrel=3
+pkgver=2.0.7
+pkgrel=1
 pkgdesc='The base directory structure and a few core files for the system.'
 arch=(any)
 url='http://www.merelinux.org'
@@ -24,7 +24,7 @@ source=(
 )
 sha256sums=(
     8d9729ffe6ad542e45bd9c2b43228f1e31c20a75721e8d34ec053cfef62bd985
-    ab1e9388edd7947b307b9812f5648f738d797117d99a91deb7e4fb2096c1926f
+    8ba0c6ce6030e0161f480eb8f9168451d5ce49e48cdd5b69525e443f411c20bd
     fc51d9783a4b429606e2621605ad9836d585fea60d051a7a0e8e62dd03d4bb45
     1dcc1e00d7189fa105c726b253aab416b3c0d47e432ac9958db54c7faacb9ac7
     b4d36eb75767bebb41c5fa7a35599952e1883b3d3f6332496e1561eeb4067018
