@@ -3,7 +3,7 @@
 
 pkgname=(musl musl-dev)
 pkgver=1.2.4
-pkgrel=1
+pkgrel=2
 pkgdesc='An implementation of the C/POSIX standard library.'
 arch=(x86_64)
 url='https://musl.libc.org'
@@ -15,13 +15,16 @@ options=()
 changelog=ChangeLog
 source=(
     "http://www.etalabs.net/musl/releases/${pkgname[0]}-${pkgver}.tar.gz"
+    "add-elf_relr-typedefs.patch::https://git.musl-libc.org/cgit/musl/patch/?id=6be76895f6863100a311d474a42abdbb6466189d"
 )
 sha256sums=(
     7a35eae33d5372a7c0da1188de798726f68825513b7ae3ebe97aaaa52114f039
+    d5f639c6f38504805a07a426ccc4fbb0f657205047009143baf972f6687335f4
 )
 
 build() {
     cd_unpacked_src
+    patch -Np1 -i "${srcdir}/add-elf_relr-typedefs.patch"
     unset CFLAGS CXXFLAGS
     # Disable utmpx since utmps will provide it, avoid duplicate symbols in libs
     # Also set default utmp paths to ones utmps will handle
