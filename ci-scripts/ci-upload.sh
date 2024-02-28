@@ -1,7 +1,7 @@
 #!/bin/bash -e
 # shellcheck disable=SC1091,SC2154
 . "$CIRCLE_WORKING_DIRECTORY"/.env
-if [ "$bn" = 'main' ] && [ "${#pkgs[@]}" -gt 0 ] && [ "$CIRCLE_NODE_INDEX" = '0' ] ; then
+if [ "$bn" = 'main' ] && [ "${#pkgs[@]}" -gt 0 ]; then
     export PATH="/tmp/tools/bin:/tmp/tools/usr/bin:$PATH"
     # List built packages
     find mere-build

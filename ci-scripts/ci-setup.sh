@@ -7,8 +7,8 @@ case "$bn" in
     main)
     # install pacman-build
     install -d /tmp/pacman
-    curl -LO http://pkgs.merelinux.org/core/pacman-latest-x86_64.pkg.tar.xz
-    tar -C /tmp/pacman -xf pacman-latest-x86_64.pkg.tar.xz 2>/dev/null
+    curl -LO http://pkgs.merelinux.org/core/testing/os/pacman-latest-$(arch).pkg.tar.xz
+    tar -C /tmp/pacman -xf pacman-latest-$(arch).pkg.tar.xz 2>/dev/null
 
     cat >/tmp/pacman/etc/pacman.conf <<- "EOF"
 	[options]
@@ -25,9 +25,16 @@ case "$bn" in
         -r /tmp/tools --noconfirm pacman-build
 
     for dir in packages/* ; do
-        unset pkgname pkgver pkgrel
-        . "${dir}/PKGBUILD"
+        unset pkgname pkgver pkgrel arch
         printf 'Processing %s\n' "$dir"
+        . "${dir}/PKGBUILD"
+
+        if ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "$(arch)" && \
+           ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "any"; then
+            # Doesn't match this architecture, don't build.
+            continue
+        fi
+
         for pkg in "${pkgname[@]}"; do
             printf '  Evaluating package %s\n' "$pkg"
             syncver=$(/tmp/pacman/usr/bin/pacman \
@@ -49,6 +56,16 @@ case "$bn" in
             # skip build if package is deleted
             git log --oneline --full-history -1 -p -- "$file" \
                 | head | grep -q '^+++ /dev/null' && continue
+
+            # skip build if package is not in this arch
+            unset arch
+            . "${dir}/PKGBUILD"
+            if ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "$(arch)" && \
+               ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "any"; then
+               # Doesn't match this architecture, don't build.
+               continue
+            fi
+
             pkgs+=("${file%/*}")
         fi
     done
@@ -65,13 +82,4 @@ bn='$bn'
 pkgs=(${unique_pkgs[@]})
 EOF
 
-case "$bn" in
-    *-parallel)
-        curl -fsSL https://tailscale.com/install.sh | sudo sh
-        sudo tailscale up --authkey="$TS_KEY" \
-            --hostname="mereci-${CIRCLE_BUILD_NUM}-${CIRCLE_NODE_TOTAL}-${CIRCLE_NODE_INDEX}"
-        ;;
-esac
-
 printf '%s\n' "$MERE_SIGNING_KEY" | base64 -d >"$CIRCLE_WORKING_DIRECTORY"/mere.key
-
