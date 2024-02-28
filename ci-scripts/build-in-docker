@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# FIXME: remove this after signatures are fully working
+[ "$(arch)" = 'aarch64' ] && sed -i '/SigLevel/s@=.*@= Never@' /etc/pacman.conf
 
 pacman -Syu --noconfirm
 # Running twice allows dependencies to sort themselves out
