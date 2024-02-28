@@ -4,7 +4,7 @@
 pkgname=(llvm llvm-dev libLLVM libclang libcxx libunwind)
 _ver_major=17
 pkgver=${_ver_major}.0.6
-pkgrel=1
+pkgrel=2
 pkgdesc='A collection of modular and reusable compiler and toolchain technologies.'
 arch=('x86_64')
 url='htps://llvm.org'
@@ -47,6 +47,7 @@ _binfiles=(
         usr/bin/llvm-nm
         usr/bin/llvm-objcopy
         usr/bin/llvm-objdump
+        usr/bin/llvm-readelf
         usr/bin/llvm-readobj
         usr/bin/llvm-size
         usr/bin/llvm-strings
