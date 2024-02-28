@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC2154,SC2068
 
 pkgname=(linux linux-headers)
-pkgver=6.2.2
+pkgver=6.1.79
 pkgrel=1
 pkgdesc='System kernel'
 arch=(x86_64)
@@ -13,8 +13,10 @@ makedepends=(
     bison
     flex
     libelf-dev
+    openssl-dev
     perl
     python
+    rsync
     zlib-ng-dev
 )
 options=()
@@ -26,18 +28,15 @@ source=(
 )
 
 sha256sums=(
-    c12755a2bb0e19e83457727e949ee1020cc268f44222488256223da8eeecbfb0
-    ca1151e80fc0e2047181d79d534a8035f0e1c044b8a592bd35b7feb9bb02fbaa
+    faa49ca22fb55ed4d5ca2a55e07dd10e4e171cfc3b92568a631453cd2068b39b
+    1bf2589c7f42acde43c0e3f3a63a73f24815e27f75f99dbcb9250a877b7ed90f
     c8f3271471fd3c9b576fca983511da87f2f9c14dbc1e6eb1573fe98a771b0481
 )
 
 build() {
     cd_unpacked_src
     sed -i 's@/usr/bin/awk@/bin/awk@' scripts/ld-version.sh
-    sed -i '/<stdlib.h>/a #include <linux/stddef.h>' \
-        tools/objtool/arch/x86/decode.c
     sed -i \
-        -e "/rsync/s@rsync@find usr/include -not -type d -name '*.h' | cpio -dump --quiet \$\(INSTALL_HDR_PATH\); true@" \
         -e "/^CC/s@gcc@${CC:-cc}@g" \
         -e "/^HOSTCC/s@gcc@${CC:-cc}@g" Makefile
     # Some internal build scripts expect the GNU find command.
@@ -45,7 +44,7 @@ build() {
     patch -Np1 -i "${srcdir}/busybox-find-compat.patch"
     make LLVM=1 LLVM_IAS=1 mrproper
     cp "${srcdir}/linux-config" .config
-    make LLVM=1 LLVM_IAS=1 -j "$((nproc * nodes * 2))"
+    make LLVM=1 LLVM_IAS=1 -j "$(nproc)"
 }
 
 package_linux() {
