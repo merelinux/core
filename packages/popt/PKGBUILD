@@ -1,0 +1,41 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=popt-dev
+pkgver=1.19
+pkgrel=2
+pkgdesc='A command line argument parser'
+arch=(x86_64)
+url='http://rpm5.org'
+license=(BSD)
+groups=()
+depends=()
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+    "http://ftp.rpm.org/popt/releases/popt-1.x/popt-${pkgver}.tar.gz"
+)
+sha256sums=(
+    c25a4838fc8e4c1c8aacb8bd620edb3084a3d63bf8987fdad3ca2758c63240f9
+)
+
+
+build() {
+    cd_unpacked_src
+    CFLAGS+=' -fPIC' \
+        ./configure --prefix=/usr \
+	    --enable-static \
+        --disable-shared
+    make
+}
+
+package() {
+    pkgfiles=(
+        usr/include
+        usr/lib/lib*.a
+        usr/lib/pkgconfig
+        usr/share/man/man3
+    )
+    std_package
+}
