@@ -87,7 +87,6 @@ case "$cmd" in
             -v "$MEREDIR":/mere \
             -v "$(pwd)"/mere.key:/tmp/mere.key \
             -v "$(pwd)"/ci-scripts/build-in-docker:/usr/local/bin/build-in-docker \
-            -v "$(pwd)"/ci-scripts/aa-distcc.sh:/usr/share/makepkg/tidy/aa-distcc.sh \
             --env-file ./.build-env \
             mere/dev:latest "$cmd"
         printf '\nNew package(s) added to %s\n' "${MEREDIR}/pkgs"
