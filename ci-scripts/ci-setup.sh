@@ -59,7 +59,7 @@ case "$bn" in
 
             # skip build if package is not in this arch
             unset arch
-            . "${dir}/PKGBUILD"
+            . "$file"
             if ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "$(arch)" && \
                ! printf '%s\0' "${arch[@]}" | grep -Fqxz -- "any"; then
                # Doesn't match this architecture, don't build.
