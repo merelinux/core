@@ -1,0 +1,45 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=rsync
+pkgver=3.2.7
+pkgrel=1
+pkgdesc='A fast incremental file transfer utility'
+arch=(x86_64)
+url='https://rsync.samba.org/'
+license=(GPL3)
+groups=()
+depends=()
+makedepends=(
+    perl
+    zlib-ng-dev
+)
+options=()
+changelog=ChangeLog
+source=(
+    "https://download.samba.org/pub/rsync/src/rsync-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    4e7d9d3f6ed10878c58c5fb724a67dacf4b6aac7340b13e488fb2dc41346f2bb
+)
+
+
+build() {
+    cd_unpacked_src
+    LDFLAGS='-static -Wl,-static' \
+      ./configure --prefix=/usr \
+        --disable-openssl \
+        --disable-xxhash \
+        --disable-zstd \
+        --disable-lz4
+    make
+}
+
+package() {
+    pkgfiles=(
+        usr/bin/rsync
+        usr/share/man/man1
+    )
+    std_package
+}
