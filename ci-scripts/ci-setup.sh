@@ -7,7 +7,7 @@ case "$bn" in
     main)
     # install pacman-build
     install -d /tmp/pacman
-    curl -LO http://pkgs.merelinux.org/core/testing/os/pacman-latest-$(arch).pkg.tar.xz
+    curl -LO http://pkgs.merelinux.org/core/testing/os/$(arch)/pacman-latest-$(arch).pkg.tar.xz
     tar -C /tmp/pacman -xf pacman-latest-$(arch).pkg.tar.xz 2>/dev/null
 
     cat >/tmp/pacman/etc/pacman.conf <<- "EOF"
