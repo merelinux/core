@@ -1,0 +1,42 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=gptfdisk
+pkgver=1.0.10
+pkgrel=1
+pkgdesc='A set of text-mode partitioning tools'
+arch=(x86_64)
+url='http://www.rodsbooks.com/gdisk'
+license=(GPL2)
+groups=()
+depends=()
+makedepends=(
+    libncurses-dev
+    libuuid-dev
+    popt-dev
+)
+options=()
+changelog=ChangeLog
+source=(
+    "http://www.rodsbooks.com/gdisk/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha256sums=(
+    2abed61bc6d2b9ec498973c0440b8b804b7a72d7144069b5a9209b2ad693a282
+)
+
+
+build() {
+    cd_unpacked_src
+    CXX=c++ CXXFLAGS+=' -static' \
+        LDFLAGS='-static -Wl,-static -lunwind -lc++abi' MAKEFLAGS='' make
+}
+
+package() {
+    cd_unpacked_src
+    install -d "${pkgdir}/usr/sbin" "${pkgdir}/usr/share/man/man8"
+    for bin in cgdisk gdisk sgdisk fixparts ; do
+        install -m0755 $bin "${pkgdir}/usr/sbin/"
+        install -m0644 "${bin}.8" "${pkgdir}/usr/share/man/man8/"
+    done
+}
