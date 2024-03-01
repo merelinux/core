@@ -1,3 +1,7 @@
+0.21.5-2 (2024-03-01)
+
+	Rebuild with -fPIC
+
 0.21.5-1 (2024-02-27)
 
 	Initial version
