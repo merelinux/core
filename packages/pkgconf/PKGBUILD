@@ -5,7 +5,7 @@ pkgname=pkgconf
 pkgver=2.1.1
 pkgrel=1
 pkgdesc='An API-driven pkg-config replacement'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='https://github.com/pkgconf/pkgconf'
 license=(BSD)
 groups=(build-base)
@@ -24,13 +24,12 @@ sha256sums=(
 
 build() {
     cd_unpacked_src
-    LDFLAGS='--static' \
-      ./configure \
+    ./configure \
       --prefix=/usr \
       --disable-shared \
       --with-system-libdir=/usr/lib \
       --with-system-includedir=/usr/include
-    make
+    make LDFLAGS='--static'
 }
 
 package() {
