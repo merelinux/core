@@ -11,7 +11,7 @@ pkgname=(
 pkgver=8.6.0
 pkgrel=1
 pkgdesc='An API for writing text-based user interfaces'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='http://curl.se'
 license=(GPL2)
 groups=()
@@ -35,14 +35,13 @@ sha256sums=(
 build() {
     cd_unpacked_src
     rm src/tool_hugehelp.c
-    CFLAGS+=' -fPIC' LDFLAGS='--static' \
     ./configure \
       --prefix=/usr \
       --enable-static \
       --disable-shared \
       --with-ssl \
       --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt
-    make V=1
+    make V=1 CFLAGS="$CFLAGS -fPIC --static"
     install -v src/curl{,-static}
     unset LDFLAGS
     make clean
