@@ -3,7 +3,7 @@
 
 pkgname=(libpsl libpsl-dev)
 pkgver=0.21.5
-pkgrel=1
+pkgrel=2
 pkgdesc='C library for the Public Suffix List'
 arch=(aarch64 x86_64)
 url='https://github.com/rockdaboot/libpsl'
@@ -27,6 +27,7 @@ sha256sums=(
 
 build() {
     cd_unpacked_src
+    export CFLAGS+=' -fPIC'
     meson build/ \
         -Dprefix=/usr \
         -Dlibdir=/usr/lib \
