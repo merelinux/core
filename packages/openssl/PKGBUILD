@@ -5,7 +5,7 @@ pkgname=(openssl libssl-3 openssl-dev)
 pkgver=3.2.1
 pkgrel=1
 pkgdesc='a toolkit for the TLS and SSL protocols'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='https://www.openssl.org'
 license=(BSD)
 groups=()
@@ -19,19 +19,22 @@ changelog=ChangeLog
 
 source=(
     "https://www.openssl.org/source/openssl-${pkgver}.tar.gz"
+    linux-aarch64-clang.patch
 )
 sha256sums=(
     83c7329fe52c850677d75e5d0b0ca245309b97e8ecbcfdc1dfdc4ab9fac35b39
+    8c3a5d52e3ef22987ac6613d3195ac946bca8fd78cd4b887fcaed64d2b27cb72
 )
 
 
 build() {
     cd_unpacked_src
+    patch -Np1 -i "${srcdir}/linux-aarch64-clang.patch"
     ./Configure \
         --prefix=/usr \
         --libdir=/usr/lib \
         --openssldir=/etc/ssl \
-        linux-x86_64-clang
+        linux-$(arch)-clang
     make
 }
 
