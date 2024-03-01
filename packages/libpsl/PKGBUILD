@@ -5,7 +5,7 @@ pkgname=(libpsl libpsl-dev)
 pkgver=0.21.5
 pkgrel=1
 pkgdesc='C library for the Public Suffix List'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='https://github.com/rockdaboot/libpsl'
 license=(MIT)
 groups=()
@@ -29,6 +29,7 @@ build() {
     cd_unpacked_src
     meson build/ \
         -Dprefix=/usr \
+        -Dlibdir=/usr/lib \
         -Dbuildtype=release \
         -Ddefault_library=both
     ninja -C build/
