@@ -5,7 +5,7 @@ pkgname=(xz liblzma-dev)
 pkgver=5.6.0
 pkgrel=1
 pkgdesc='Free general-purpose data compression software with high compression ratio.'
-arch=('x86_64')
+arch=(aarch64 x86_64)
 url='https://tukaani.org/xz'
 license=('GPL2')
 groups=()
@@ -23,13 +23,13 @@ sha256sums=(
 
 build() {
     cd_unpacked_src
-    CFLAGS+=' -fPIC' LDFLAGS='--static' \
+    CFLAGS+=' -fPIC' \
       ./configure \
       --prefix=/usr \
       --disable-shared \
       --enable-static \
       --disable-nls
-    make
+    make LDFLAGS='--static'
 }
 
 package_xz() {
