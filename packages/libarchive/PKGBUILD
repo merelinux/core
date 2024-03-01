@@ -9,7 +9,7 @@ pkgname=(
 pkgver=3.7.2
 pkgrel=1
 pkgdesc='Multi-format archive and compression library'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='http://www.libarchive.org'
 license=(BSD)
 groups=()
@@ -38,12 +38,11 @@ build() {
     sed -i 's@ -qq@@' libarchive/archive_read_support_filter_xz.c
     sed -i 's@xz -d@unxz@' libarchive/archive_read_support_filter_xz.c
     sed -i 's@lzma -d@unlzma@' libarchive/archive_read_support_filter_xz.c
-    CFLAGS+=' -fPIC --static' LDFLAGS='-static -Wl,-static' \
-        ./configure \
+    ./configure \
         --prefix=/usr \
         --disable-shared \
         --enable-static
-    make V=1
+    make V=1 CFLAGS="$CFLAGS -fPIC --static"
 }
 
 package_libarchive() {
