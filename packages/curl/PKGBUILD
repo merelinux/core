@@ -9,7 +9,7 @@ pkgname=(
     ca-certs
 )
 pkgver=8.6.0
-pkgrel=1
+pkgrel=2
 pkgdesc='An API for writing text-based user interfaces'
 arch=(aarch64 x86_64)
 url='http://curl.se'
@@ -43,7 +43,6 @@ build() {
       --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt
     make V=1 CFLAGS="$CFLAGS -fPIC --static"
     install -v src/curl{,-static}
-    unset LDFLAGS
     make clean
     CFLAGS+=' -fPIC' \
     ./configure \
