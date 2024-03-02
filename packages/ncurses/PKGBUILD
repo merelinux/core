@@ -1,7 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154,SC2068
 
-rationale='The packaging of ncurses for the final system requires utilities that ship with ncurses, so it has a self-dependency'
 pkgname=(
     ncurses
     ncurses-terminfo
@@ -10,7 +9,7 @@ pkgname=(
 pkgver=6.4
 pkgrel=2
 pkgdesc='An API for writing text-based user interfaces'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='https://invisible-island.net/ncurses'
 license=(GPL2)
 groups=()
