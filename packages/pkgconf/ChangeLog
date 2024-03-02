@@ -1,3 +1,7 @@
+2.1.1-2 (2024-03-02)
+
+	Rebuild without mold, fix compilation on aarch64
+
 2.1.1-1 (2024-02-27)
 
 	Upgrade to 2.1.1
