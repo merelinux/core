@@ -5,7 +5,7 @@ pkgname=bash
 pkgver=5.2.26
 pkgrel=1
 pkgdesc='A full-featured sh-compatible shell.'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='http://www.gnu.org/software/bash'
 license=(GPL3)
 groups=()
@@ -51,7 +51,7 @@ build() {
     # When static linking, if the above resolves to yes, the built version will
     # contain duplicate symbols as libc. Setting to no is a quick way to get
     # around the issue.
-    make
+    make LDFLAGS='--static'
 }
 
 package() {
