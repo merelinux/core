@@ -5,7 +5,7 @@ pkgname=(linux linux-headers)
 pkgver=6.1.79
 pkgrel=1
 pkgdesc='System kernel'
-arch=(x86_64)
+arch=(aarch64 x86_64)
 url='http://www.kernel.org'
 license=(GPL2)
 depends=()
@@ -23,13 +23,15 @@ options=()
 changelog=ChangeLog
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$pkgver.tar.xz"
-    linux-config
+    linux-x86_64-config
+    linux-aarch64-config
     busybox-find-compat.patch
 )
 
 sha256sums=(
     faa49ca22fb55ed4d5ca2a55e07dd10e4e171cfc3b92568a631453cd2068b39b
     1bf2589c7f42acde43c0e3f3a63a73f24815e27f75f99dbcb9250a877b7ed90f
+    42b18c0afad2a71b31ebc052f1254f32dc998c9163ae90d903c21590ca0f706c
     c8f3271471fd3c9b576fca983511da87f2f9c14dbc1e6eb1573fe98a771b0481
 )
 
@@ -43,7 +45,7 @@ build() {
     # Specifically, they expect find will have the -printf flag.
     patch -Np1 -i "${srcdir}/busybox-find-compat.patch"
     make LLVM=1 LLVM_IAS=1 mrproper
-    cp "${srcdir}/linux-config" .config
+    cp "${srcdir}/linux-$(arch)-config" .config
     make LLVM=1 LLVM_IAS=1 -j "$(nproc)"
 }
 
@@ -51,8 +53,12 @@ package_linux() {
     groups=(base)
     cd_unpacked_src
     make LLVM=1 LLVM_IAS=1 INSTALL_MOD_PATH="$pkgdir" modules_install
+    case $(arch) in
+        x86_64)  ARCH=x86_64 IMAGE=bzImage ;;
+        aarch64) ARCH=arm64  IMAGE=Image   ;;
+    esac
     install -d "${pkgdir}/boot"
-    install "arch/${CARCH}/boot/bzImage" "${pkgdir}/boot/vmlinux"
+    install "arch/${ARCH}/boot/${IMAGE}" "${pkgdir}/boot/vmlinux"
     install .config "${pkgdir}/boot/config"
     # remove build/source links for now
     rm -f "${pkgdir}/lib/modules/${pkgver}/build" \
