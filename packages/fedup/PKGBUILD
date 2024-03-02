@@ -16,14 +16,18 @@ changelog=ChangeLog
 
 source=(
     "https://github.com/jhuntwork/fedup/releases/download/v${pkgver}/fedup_${pkgver}_linux_amd64.tar.gz"
+    "https://github.com/jhuntwork/fedup/releases/download/v${pkgver}/fedup_${pkgver}_linux_arm64.tar.gz"
 )
 sha256sums=(
     df414ba1b44496f2448a16d7d657205581a5673e7725468b8651b3f8082ebc04
+    affd4834f798b94ce284c9964098685289fcb74a0c478562e59171a6eb59a4f8
 )
 
 
 build() {
     cd_unpacked_src
+    [ "$(arch)" = 'aarch64' ] &&
+        tar -xf "${srcdir}/fedup_${pkgver}_linux_arm64.tar.gz"
 }
 
 package() {
