@@ -4,7 +4,7 @@
 pkgname=(llvm llvm-dev libLLVM libclang libcxx libunwind)
 _ver_major=17
 pkgver=${_ver_major}.0.6
-pkgrel=2
+pkgrel=3
 pkgdesc='A collection of modular and reusable compiler and toolchain technologies.'
 arch=(aarch64 x86_64)
 url='htps://llvm.org'
@@ -41,6 +41,7 @@ _binfiles=(
         usr/bin/clang-cpp
         usr/bin/ld.lld
         usr/bin/ld64.lld
+        usr/bin/ld
         usr/bin/lld
         usr/bin/lld-link
         usr/bin/llvm-ar
@@ -144,7 +145,6 @@ package_llvm() {
         libc++abi.so.1
         libunwind.so.1
         libz.so.1
-        mold
         musl-dev
     )
     provides=(
@@ -166,6 +166,7 @@ package_llvm() {
     ln -s libunwind.so.1.0 usr/lib/libgcc_s.so.1.0
     ln -s libgcc_s.so.1.0 usr/lib/libgcc_s.so.1
     ln -s libgcc_s.so.1.0 usr/lib/libgcc_s.so
+    ln -sf ld.lld usr/bin/ld
     package_defined_files
 }
 

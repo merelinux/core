@@ -1,3 +1,8 @@
+17.0.6-3 (2024-03-01)
+
+	Remove dependency on mold. We will stick to lld as default linker for 
+	now.
+
 17.0.6-2 (2024-02-27)
 
 	Add llvm-readelf
