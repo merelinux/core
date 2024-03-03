@@ -1,0 +1,41 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=htop
+pkgver=3.3.0
+pkgrel=1
+pkgdesc='An interactive process viewer for Unix'
+arch=(aarch64 x86_64)
+url='http://htop.dev'
+license=(BSD)
+groups=()
+depends=()
+makedepends=(
+    libncurses-dev
+    libtool
+)
+options=()
+changelog=ChangeLog
+
+source=(
+    "htop-${pkgver}.tar.gz::https://github.com/htop-dev/htop/archive/refs/tags/${pkgver}.tar.gz"
+)
+sha256sums=(
+    1e5cc328eee2bd1acff89f860e3179ea24b85df3ac483433f92a29977b14b045
+)
+
+
+build() {
+    cd_unpacked_src
+    sed -i 's@-rdynamic@@g' Makefile.am
+    ./autogen.sh
+    ./configure \
+      --prefix=/usr \
+      --enable-static
+    make
+}
+
+package() {
+    cd_unpacked_src
+    make DESTDIR="${pkgdir}" install
+}
