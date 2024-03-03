@@ -1,0 +1,62 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(pcre2 libpcre2-dev)
+pkgver=10.43
+pkgrel=1
+pkgdesc='Perl Compatible Regular Expressions'
+arch=(aarch64 x86_64)
+url='http://pcre.org'
+license=(GPL)
+groups=()
+depends=()
+makedepends=()
+options=()
+changelog=ChangeLog
+source=(
+    "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${pkgver}/pcre2-${pkgver}.tar.bz2"
+)
+sha256sums=(
+    e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb
+)
+
+
+build() {
+    cd_unpacked_src
+    ./configure --prefix=/usr \
+        --enable-shared \
+        --enable-static \
+        --enable-utf8 \
+        --enable-unicode-properties
+    make
+}
+
+package_pcre2() {
+    pkgfiles=(
+        usr/bin
+        usr/lib/*.so.*
+    )
+    depends=(
+        "ld-musl-$(arch).so.1"
+    )
+    provides=(
+        libpcre2-8.so.0
+        libpcre2-posix.so.3
+    )
+    std_package
+    rm "${pkgdir}/usr/bin/pcre2-config"
+}
+
+package_libpcre2-dev() {
+    pkgfiles=(
+        usr/bin/pcre2-config
+        usr/include
+        usr/lib/*.a
+        usr/lib/*.so
+        usr/lib/pkgconfig
+    )
+    depends=(
+        "pcre2=${pkgver}"
+    )
+    std_split_package
+}
