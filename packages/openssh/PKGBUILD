@@ -1,0 +1,62 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=(openssh-client)
+_vermajor=9
+_verminor=6
+pkgver=${_vermajor}.${_verminor}p1
+pkgrel=1
+pkgdesc='the premier connectivity tool for remote login with the SSH protocol'
+arch=(aarch64 x86_64)
+url='https://openssh.com'
+license=(BSD)
+groups=()
+depends=()
+makedepends=(
+    openssl-dev
+    utmps-dev
+    zlib-ng-dev
+)
+options=()
+changelog=ChangeLog
+
+source=(
+    "https://ftp4.usa.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${pkgver}.tar.gz"
+)
+sha256sums=(
+    910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c
+)
+
+
+build() {
+    cd_unpacked_src
+    export LDFLAGS='--static'
+    ./configure \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --disable-utmp \
+        --disable-utmpx \
+        --disable-wtmp \
+        --disable-wtmpx \
+        --disable-lastlog \
+        --with-mantype=man
+    make
+}
+
+package_openssh-client() {
+    depends=(
+    )
+    pkgfiles=(
+        usr/bin/ssh
+        usr/bin/ssh-keyscan
+        usr/bin/ssh-keygen
+        usr/bin/scp
+        usr/bin/sftp
+        usr/bin/ssh
+        usr/bin/ssh-agent
+        usr/bin/ssh-add
+        etc/ssh_config
+        usr/share/man/man1
+    )
+    std_package
+}
