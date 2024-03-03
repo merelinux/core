@@ -1,0 +1,65 @@
+#!/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2068
+
+pkgname=vim
+_vermajor=9
+_verminor=1
+_verpatch=0146
+pkgver="${_vermajor}.${_verminor}.${_verpatch}"
+pkgrel=1
+pkgdesc='An IMproved version of the vi editor'
+arch=(aarch64 x86_64)
+url='http://www.vim.org'
+license=(VIM)
+groups=()
+depends=()
+makedepends=(libncurses-dev)
+options=()
+changelog=ChangeLog
+source=(
+    "https://github.com/vim/vim/archive/v${pkgver}.tar.gz"
+    vimrc
+)
+
+sha256sums=(
+    5972664d59c63d8c2ba465689dca289994008a63936fff215dc6b1fea494a847
+    5e698ff1872bae79b7eae3f35bfca2e426c2698a785687fb9035e0fee16de91a
+)
+
+
+build() {
+    cd_unpacked_src
+
+    # Set the path of the default vimrc file
+    echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+
+    # Fix some feature tests
+    sed -i -e '/thisterminaldoesnotexist/i #include <term.h>' \
+           -e '/0xffffffffUL;/i #include <stdlib.h>' \
+	   src/auto/configure
+
+    CC='cc -I/include/ncursesw' \
+        CFLAGS+=' -fPIC' LDFLAGS='--static' \
+        ./configure \
+        --prefix=/usr \
+        --enable-multibyte \
+        --with-tlib=ncursesw
+    make
+}
+
+package_vim() {
+    pkgfiles=(
+        usr/bin
+        etc
+        usr/share/man/man1
+        usr/share/vim
+    )
+    options+=(emptydirs)
+    cd_unpacked_src
+    make DESTDIR="${pkgdirbase}/dest" install
+    cd "${pkgdirbase}/dest" || return 1
+    install -d etc
+    install -m 0644 "${srcdir}/vimrc" etc/vimrc
+    rm -f usr/bin/xxd
+    package_defined_files
+}
