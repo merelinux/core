@@ -3,7 +3,7 @@
 
 pkgname=(libevent libevent-dev)
 pkgver=2.1.12
-pkgrel=2
+pkgrel=3
 pkgdesc='An event based library'
 arch=(aarch64 x86_64)
 url='https://libevent.org/'
@@ -32,8 +32,8 @@ package_libevent() {
     )
     depends=(
         "ld-musl-$(arch).so.1"
-        libcrypto.so.1.1
-        libssl.so.1.1
+        libcrypto.so.3
+        libssl.so.3
     )
     provides=(
         libevent_openssl-2.1.so.7
