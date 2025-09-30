@@ -1,10 +1,10 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154,SC2068,SC2086
 
-pkgname=(llvm llvm-dev libLLVM libclang libcxx libunwind)
-_ver_major=17
-pkgver=${_ver_major}.0.6
-pkgrel=3
+pkgname=(llvm llvm-dev libclang libcxx)
+_ver_major=20
+pkgver=${_ver_major}.1.8
+pkgrel=1
 pkgdesc='A collection of modular and reusable compiler and toolchain technologies.'
 arch=(aarch64 x86_64)
 url='htps://llvm.org'
@@ -26,7 +26,7 @@ source=(
 )
 
 sha256sums=(
-    58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813
+    6898f963c8e938981e6c4a302e83ec5beb4630147c7311183cf61069af16333d
 )
 
 _binfiles=(
@@ -68,12 +68,6 @@ _binfiles=(
 
 build() {
     cd_unpacked_src
-    sed -i \
-        -e 's@strtoull_l@strtoull@g' \
-        -e '/strtoull/s@, _LIBCPP_GET_C_LOCALE@@' \
-        -e 's@strtoll_l@strtoll@g' \
-        -e '/strtoll/s@, _LIBCPP_GET_C_LOCALE@@' \
-        libcxx/include/locale
     sed -i "/dlfcn.h/s@\$@\n#include <sys/types.h>@" \
         compiler-rt/lib/fuzzer/FuzzerInterceptors.cpp
     install -d build
@@ -81,24 +75,26 @@ build() {
     unset CFLAGS CXXFLAGS LDFLAGS
     CFLAGS='-Wno-gnu-line-marker' \
     CXXFLAGS='-Wno-gnu-line-marker' \
-    ln -sf ld.lld /usr/bin/ld
     cmake -G Ninja -Wno-dev \
         -DCMAKE_BUILD_TYPE=Release \
         -DCLANG_BUILD_EXAMPLES=OFF \
         -DCMAKE_INSTALL_PREFIX=/usr \
         -DCLANG_DEFAULT_CXX_STDLIB='libc++' \
         -DCLANG_DEFAULT_RTLIB='compiler-rt' \
-        -DCLANG_ENABLE_BOOTSTRAP=ON \
         -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
         -DCOMPILER_RT_BUILD_XRAY=OFF \
         -DCOMPILER_RT_USE_LIBCXX=ON \
         -DLIBCLANG_BUILD_STATIC=ON \
         -DLIBCXX_HAS_MUSL_LIBC=ON \
+        -DLIBCXX_HAS_RT_LIB=OFF \
         -DLIBCXX_USE_COMPILER_RT=ON \
+        -DLIBCXX_HAS_GCC_S_LIB=OFF \
+        -DLIBCXXABI_ENABLE_STATIC_UNWINDER=ON \
         -DLIBCXXABI_USE_COMPILER_RT=ON \
         -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+        -DLIBUNWIND_ENABLE_SHARED=OFF \
+        -DLIBUNWIND_USE_COMPILER_RT=ON \
         -DLLVM_BUILD_EXAMPLES=OFF \
-        -DLLVM_BUILD_LLVM_DYLIB=ON \
         -DLLVM_DEFAULT_TARGET_TRIPLE="$CHOST" \
         -DLLVM_ENABLE_LIBCXX=ON \
         -DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON \
@@ -106,11 +102,10 @@ build() {
         -DLLVM_ENABLE_PROJECTS='lld;clang;compiler-rt' \
         -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' \
         -DLLVM_ENABLE_RTTI=ON \
-        -DLLVM_ENABLE_TERMINFO=OFF \
         -DLLVM_HOST_TRIPLE="$CHOST" \
         -DLLVM_INSTALL_BINUTILS_SYMLINKS=ON \
         ../llvm
-    ninja -j "$((nproc * nodes * 2))"
+    ninja -j "$((nproc * 2))"
 }
 
 package_llvm() {
@@ -127,23 +122,19 @@ package_llvm() {
         usr/lib/libc++experimental.a
         usr/lib/libclang.so
         usr/lib/libgcc_s.a
-        usr/lib/libgcc_s.so
         usr/lib/libunwind.a
-        usr/lib/libunwind.so
         usr/lib/"$CHOST"/libc++.a
         usr/lib/"$CHOST"/libc++.so
         usr/lib/"$CHOST"/libc++abi.a
         usr/lib/"$CHOST"/libc++abi.so
         usr/lib/"$CHOST"/libc++experimental.a
         usr/lib/"$CHOST"/libunwind.a
-        usr/lib/"$CHOST"/libunwind.so
         usr/lib/clang
     )
     depends=(
         "ld-musl-$(arch).so.1"
         libc++.so.1
         libc++abi.so.1
-        libunwind.so.1
         libz.so.1
         musl-dev
     )
@@ -163,9 +154,6 @@ package_llvm() {
     ln -s clang usr/bin/cc
     ln -s clang++ usr/bin/c++
     ln -s libunwind.a usr/lib/libgcc_s.a
-    ln -s libunwind.so.1.0 usr/lib/libgcc_s.so.1.0
-    ln -s libgcc_s.so.1.0 usr/lib/libgcc_s.so.1
-    ln -s libgcc_s.so.1.0 usr/lib/libgcc_s.so
     ln -sf ld.lld usr/bin/ld
     package_defined_files
 }
@@ -192,34 +180,13 @@ package_llvm-dev() {
         "ld-musl-$(arch).so.1"
         libc++.so.1
         libc++abi.so.1
-        libunwind.so.1
         libz.so.1
         "llvm=${pkgver}"
-        "libLLVM=${pkgver}"
         "libclang=${pkgver}"
         "libcxx=${pkgver}"
-        "libunwind=${pkgver}"
     )
     std_split_package
     rm "${pkgdir}/usr/include/llvm-c/lto.h"
-    find "${pkgdir}/usr/lib/" -name "libLLVM-${_ver_major}*so" -delete
-}
-
-package_libLLVM() {
-    pkgfiles=(
-        "usr/lib/libLLVM-${_ver_major}*so"
-    )
-    depends=(
-        "ld-musl-$(arch).so.1"
-        libc++.so.1
-        libc++abi.so.1
-        libunwind.so.1
-        libz.so.1
-    )
-    provides=(
-        "libLLVM-${_ver_major}.so"
-    )
-    std_split_package
 }
 
 package_libclang() {
@@ -230,7 +197,6 @@ package_libclang() {
         "ld-musl-$(arch).so.1"
         libc++.so.1
         libc++abi.so.1
-        libunwind.so.1
         libz.so.1
     )
     provides=(
@@ -249,7 +215,6 @@ package_libcxx() {
     )
     depends=(
         "ld-musl-$(arch).so.1"
-        libunwind.so.1
     )
     replaces=(
         llvm-runtime-libs
@@ -257,22 +222,6 @@ package_libcxx() {
     provides=(
         libc++.so.1
         libc++abi.so.1
-    )
-    std_split_package
-}
-
-package_libunwind() {
-    pkgfiles=(
-        usr/lib/libgcc_s.so.*
-        usr/lib/libunwind.so.*
-        usr/lib/"$CHOST"/libunwind.so.*
-    )
-    depends=(
-        "ld-musl-$(arch).so.1"
-    )
-    provides=(
-        libgcc_s.so.1
-        libunwind.so.1
     )
     std_split_package
 }
